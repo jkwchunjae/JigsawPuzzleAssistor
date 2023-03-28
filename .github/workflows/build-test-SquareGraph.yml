@@ -11,8 +11,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./MainProject/zTest_SquareGraph
 
     steps:
     - uses: actions/checkout@v3
@@ -21,11 +24,8 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      working-directory: ./MainProject/zTest_SquareGraph
       run: dotnet restore
     - name: Build
-      working-directory: ./MainProject/zTest_SquareGraph
       run: dotnet build --no-restore
     - name: Test
-      working-directory: ./MainProject/zTest_SquareGraph
       run: dotnet test --no-build --verbosity normal
