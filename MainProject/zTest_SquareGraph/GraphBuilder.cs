@@ -37,12 +37,12 @@ public class GraphBuilder
                 if (column < _width - 1)
                 {
                     var rightNode = g.GetNode(table[row][column + 1])!;
-                    currNode.Edge1.Connect(rightNode.Edge3);
+                    currNode.Right.Connect(rightNode.Left);
                 }
                 if (row < _height - 1)
                 {
                     var bottomNode = g.GetNode(table[row + 1][column])!;
-                    currNode.Edge2.Connect(bottomNode.Edge0);
+                    currNode.Bottom.Connect(bottomNode.Top);
                 }
             }
         }
