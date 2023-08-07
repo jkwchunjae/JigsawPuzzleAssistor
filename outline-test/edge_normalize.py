@@ -21,6 +21,26 @@ def distance(x1, y1, x2, y2, x3, y3):
     dist = np.sqrt(dx * dx + dy * dy)
     return dist
 
+def calculate_angle_between_points(x1, y1, x2, y2):
+    # 두 점 사이의 방향 벡터를 계산
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # 각도를 라디안으로 계산
+    angle_rad = np.arctan2(dy, dx)
+
+    # 각도가 음수일 경우 양수로 변환
+    if angle_rad < 0:
+        angle_rad += 2 * np.pi
+
+    return angle_rad
+
+def rotate_point_around_origin(point, angle_rad):
+    x, y = point
+    rotated_x = x * np.cos(angle_rad) - y * np.sin(angle_rad)
+    rotated_y = x * np.sin(angle_rad) + y * np.cos(angle_rad)
+    return rotated_x, rotated_y
+
 # 이미지를 불러오고 그레이스케일로 변환
 image = cv2.imread('20230804_225655_3.jpg')
 # image = cv2.imread('20230806_161402_3.jpg')
@@ -97,6 +117,42 @@ for p in e23:
     cv2.circle(output, p, 3, (255, 255, 0), -1)
 # for p in e99:
 #     cv2.circle(output, p, 3, (255, 255, 255), -1)
+
+cv2.line(output, (50, 100), (250, 100), (255, 255, 255), 1)
+cv2.line(output, (50, 200), (250, 200), (255, 255, 255), 1)
+cv2.line(output, (50, 300), (250, 300), (255, 255, 255), 1)
+cv2.line(output, (50, 400), (250, 400), (255, 255, 255), 1)
+
+rad01 = calculate_angle_between_points(x0, y0, x1, y1)
+for p in e01:
+    x, y = p
+    x -= x0
+    y -= y0
+    nx, ny = rotate_point_around_origin((x, y), rad01 + np.pi)
+    nx += 50
+    ny += 100
+    cv2.circle(output, (int(nx), int(ny)), 3, (0, 0, 255), -1)
+
+rad20 = calculate_angle_between_points(x2, y2, x0, y0)
+for p in e02:
+    x, y = p
+    x -= x2
+    y -= y2
+    nx, ny = rotate_point_around_origin((x, y), rad20)
+    nx += 50
+    ny += 200
+    cv2.circle(output, (int(nx), int(ny)), 3, (0, 255, 0), -1)
+
+# rad32 = calculate_angle_between_points(x3, y3, x2, y2)
+rad32 = calculate_angle_between_points(x2, y2, x3, y3)
+for p in e23:
+    x, y = p
+    x -= x3
+    y -= y3
+    nx, ny = rotate_point_around_origin((x, y), rad32)
+    nx += 50
+    ny += 300
+    cv2.circle(output, (int(nx), int(ny)), 3, (255, 255, 0), -1)
 
 # 결과 이미지 출력
 cv2.imshow('Puzzle Area', output)
