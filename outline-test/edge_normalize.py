@@ -64,6 +64,11 @@ outline = cv2.cvtColor(outline, cv2.COLOR_BGR2GRAY)
 corners = cv2.goodFeaturesToTrack(outline, maxCorners=4, qualityLevel=0.01, minDistance=100)
 corners = np.int0(corners)
 
+cv2.putText(output, '0', tuple(corners[0].ravel()), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+cv2.putText(output, '1', tuple(corners[1].ravel()), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+cv2.putText(output, '2', tuple(corners[2].ravel()), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+cv2.putText(output, '3', tuple(corners[3].ravel()), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
 x0, y0 = corners[0].ravel()
 x1, y1 = corners[1].ravel()
 x2, y2 = corners[2].ravel()
@@ -128,7 +133,7 @@ for p in e01:
     x, y = p
     x -= x0
     y -= y0
-    nx, ny = rotate_point_around_origin((x, y), rad01 + np.pi)
+    nx, ny = rotate_point_around_origin((x, y), -1 * rad01 + 2 * np.pi)
     nx += 50
     ny += 100
     cv2.circle(output, (int(nx), int(ny)), 3, (0, 0, 255), -1)
@@ -138,21 +143,30 @@ for p in e02:
     x, y = p
     x -= x2
     y -= y2
-    nx, ny = rotate_point_around_origin((x, y), rad20)
+    nx, ny = rotate_point_around_origin((x, y), -1 * rad20 + 2 * np.pi)
     nx += 50
     ny += 200
     cv2.circle(output, (int(nx), int(ny)), 3, (0, 255, 0), -1)
 
-# rad32 = calculate_angle_between_points(x3, y3, x2, y2)
-rad32 = calculate_angle_between_points(x2, y2, x3, y3)
+rad32 = calculate_angle_between_points(x3, y3, x2, y2)
 for p in e23:
     x, y = p
     x -= x3
     y -= y3
-    nx, ny = rotate_point_around_origin((x, y), rad32)
+    nx, ny = rotate_point_around_origin((x, y), -1 * rad32 + 2 * np.pi)
     nx += 50
     ny += 300
     cv2.circle(output, (int(nx), int(ny)), 3, (255, 255, 0), -1)
+
+rad13 = calculate_angle_between_points(x1, y1, x3, y3)
+for p in e13:
+    x, y = p
+    x -= x1
+    y -= y1
+    nx, ny = rotate_point_around_origin((x, y), -1 * rad13 + 4 * np.pi)
+    nx += 50
+    ny += 400
+    cv2.circle(output, (int(nx), int(ny)), 3, (255, 0, 255), -1)
 
 # 결과 이미지 출력
 cv2.imshow('Puzzle Area', output)
