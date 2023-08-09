@@ -2,8 +2,6 @@
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
@@ -11,15 +9,18 @@
 
         private void OnCounterClicked(object sender, EventArgs e)
         {
-            count++;
+            myImage.Source = cameraView.GetSnapShot(Camera.MAUI.ImageFormat.JPEG);
+        }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+        private void cameraView_CamerasLoaded(object sender, EventArgs e)
+        {
+            cameraView.Camera = cameraView.Cameras.First();
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await cameraView.StopCameraAsync();
+                await cameraView.StartCameraAsync();
+            });
         }
     }
-
 }
