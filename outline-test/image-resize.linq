@@ -14,16 +14,32 @@ void Main()
 {
 	var init = CvInvoke.Init();
 
-	var fileName1 = "resize_20230804_225655.jpg";
-	Test(fileName1);
-	var fileName2 = "resize_20230804_225715.jpg";
-	Test(fileName2);
-	var fileName3 = "resize_20230804_225725.jpg";
-	Test(fileName3);
-	CvInvoke.WaitKey();
-	CvInvoke.DestroyAllWindows();
+	var items = new[]
+	{
+		("20230804_225655.jpg", "resize_20230804_225655.jpg"),
+		("20230804_225715.jpg", "resize_20230804_225715.jpg"),
+		("20230804_225725.jpg", "resize_20230804_225725.jpg"),
+	};
+	
+	foreach (var x in items)
+	{
+		Resize(x.Item1, x.Item2);
+	}
 }
 
+static void Resize(string source, string target)
+{
+	var imagePath = Path.Join(Directory.GetParent(Util.CurrentQueryPath).FullName, source);
+	Mat image = CvInvoke.Imread(imagePath);
+	var ratio = 0.3;
+	Image<Gray, byte> resized = new Image<Gray, byte>(image.Width, image.Height);
+	CvInvoke.Resize(image, resized, new Size(0, 0), ratio, ratio, Inter.Area);
+	var roiRectangle = new Rectangle(200, 200, 600, 600);
+	var cropped = new Mat(resized.Mat, roiRectangle);
+
+	var targetPath = Path.Join(Directory.GetParent(Util.CurrentQueryPath).FullName, target);
+	CvInvoke.Imwrite(targetPath, cropped);
+}
 
 static void Test(string fileName)
 {
@@ -76,7 +92,7 @@ static void Test(string fileName)
 	foreach (var corner in corners)
 	{
 		var point = new Point((int)corner.Point.X, (int)corner.Point.Y);
-		CvInvoke.Circle(outline, point, 3, new MCvScalar(255, 0, 255), -1);
+		CvInvoke.Circle(outline, point, 5, new MCvScalar(255, 0, 255), -1);
 	}
 
 	var edges = new List<List<Point>>
@@ -100,6 +116,7 @@ static void Test(string fileName)
 	{
 		var point = puzzleContours[i];
 
+		CvInvoke.Circle(outline, point, 3, new MCvScalar(255, 255, 255), -1);
 		//CvInvoke.Imshow("Puzzle Area", outline);
 		//CvInvoke.WaitKey();
 
@@ -139,7 +156,7 @@ static void Test(string fileName)
 		var color = x.Second;
 		foreach (var point in edge)
 		{
-			// CvInvoke.Circle(outline, point, 3, color, -1);
+			CvInvoke.Circle(outline, point, 3, color, -1);
 			//CvInvoke.Imshow("Puzzle Area", outline);
 			//CvInvoke.WaitKey();
 		}
@@ -167,7 +184,7 @@ static void Test(string fileName)
 				x: (int)rotatedPoint.X + baseX,
 				y: (int)rotatedPoint.Y + baseY
 			);
-			// CvInvoke.Circle(outline, circlePoint, 3, color, -1);
+			CvInvoke.Circle(outline, circlePoint, 3, color, -1);
 		}
 	}
 
@@ -219,6 +236,14 @@ static PointF RotatePointAroundOrigin(PointF point, double angleRad)
 	var rotatedY = x * Math.Sin(angleRad) + y * Math.Cos(angleRad);
 	
 	return new PointF((float)rotatedX, (float)rotatedY);
+}
+
+static double Distance(Point p1, Point p2)
+{
+	double dx = p2.X - p1.X;
+	double dy = p2.Y - p1.Y;
+
+	return Math.Sqrt(dx * dx + dy * dy);
 }
 
 
