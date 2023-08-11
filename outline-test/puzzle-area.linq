@@ -60,7 +60,7 @@ static void Test(string fileName)
 	Image<Bgr, byte> outline = new Image<Bgr, byte>(image.Width, image.Height, new Bgr(0, 0, 0));
 	CvInvoke.DrawContours(outline, contours, puzzleContoursIndex, new MCvScalar(0, 255, 0), 1);
 
-	var d = new Emgu.CV.Features2D.GFTTDetector(4, 0.01, 100, 5);
+	var d = new Emgu.CV.Features2D.GFTTDetector(4, 0.01, 200, 5);
 	var corners = d.Detect(outline);
 
 	// 점을 시계방향으로 정렬
@@ -76,7 +76,7 @@ static void Test(string fileName)
 	foreach (var corner in corners)
 	{
 		var point = new Point((int)corner.Point.X, (int)corner.Point.Y);
-		CvInvoke.Circle(outline, point, 3, new MCvScalar(255, 0, 255), -1);
+		CvInvoke.Circle(outline, point, 5, new MCvScalar(255, 0, 255), -1);
 	}
 
 	var edges = new List<List<Point>>
@@ -139,7 +139,7 @@ static void Test(string fileName)
 		var color = x.Second;
 		foreach (var point in edge)
 		{
-			// CvInvoke.Circle(outline, point, 3, color, -1);
+			CvInvoke.Circle(outline, point, 3, color, -1);
 			//CvInvoke.Imshow("Puzzle Area", outline);
 			//CvInvoke.WaitKey();
 		}
@@ -162,12 +162,12 @@ static void Test(string fileName)
 			float y = point.Y;
 			x -= cornerSet.Item1.Point.X;
 			y -= cornerSet.Item1.Point.Y;
-			var rotatedPoint = RotatePointAroundOrigin(new PointF(x, y), -angle + Math.PI * 2);
+			var rotatedPoint = RotatePointAroundOrigin(new PointF(x, y), -angle);
 			var circlePoint = new Point(
 				x: (int)rotatedPoint.X + baseX,
 				y: (int)rotatedPoint.Y + baseY
 			);
-			// CvInvoke.Circle(outline, circlePoint, 3, color, -1);
+			CvInvoke.Circle(outline, circlePoint, 3, color, -1);
 		}
 	}
 

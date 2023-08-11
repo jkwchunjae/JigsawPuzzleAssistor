@@ -31,10 +31,10 @@ static void Resize(string source, string target)
 {
 	var imagePath = Path.Join(Directory.GetParent(Util.CurrentQueryPath).FullName, source);
 	Mat image = CvInvoke.Imread(imagePath);
-	var ratio = 0.3;
+	var ratio = 0.4;
 	Image<Gray, byte> resized = new Image<Gray, byte>(image.Width, image.Height);
 	CvInvoke.Resize(image, resized, new Size(0, 0), ratio, ratio, Inter.Area);
-	var roiRectangle = new Rectangle(200, 200, 600, 600);
+	var roiRectangle = new Rectangle(250, 400, 800, 800);
 	var cropped = new Mat(resized.Mat, roiRectangle);
 
 	var targetPath = Path.Join(Directory.GetParent(Util.CurrentQueryPath).FullName, target);

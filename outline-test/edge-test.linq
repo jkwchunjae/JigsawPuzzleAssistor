@@ -14,7 +14,6 @@ void Main()
 {
 	var init = CvInvoke.Init();
 
-
 	var fileName1 = "resize_20230804_225655.jpg";
 	var fileName2 = "resize_20230804_225715.jpg";
 	var fileName3 = "resize_20230804_225725.jpg";
@@ -31,6 +30,33 @@ void Main()
 	piece2.Test(piece3);
 	piece3.Test(piece1);
 
+	Image<Bgr, byte> board = new Image<Emgu.CV.Structure.Bgr, byte>(1000, 1000);
+	
+	var heads = piece2.Edges.Where(e => e.IsHead)
+		.Concat(piece3.Edges.Where(e => e.IsHead))
+		.Select((x, i) => new { Piece = x, Index = i })
+		.ToList();
+		
+	var hole = piece1.Edges.First(e => e.IsHole);
+	foreach (var headItem in heads)
+	{
+		var index = headItem.Index;
+		var head = headItem.Piece;
+		
+		var y = 200 + index * 200;
+
+		head.PrintTo(board, new Point(300, y), new MCvScalar(0, 255, 255));
+		hole.Reverse().PrintTo(board, new Point(300, y), new MCvScalar(255, 255, 255));
+		
+		head.Test(hole).Dump();
+
+		CvInvoke.Line(board, new Point(0, y), new Point(1000, y), new MCvScalar(255, 255, 255));
+	}
+	
+
+
+
+	CvInvoke.Imshow("board", board);
 	CvInvoke.WaitKey();
 	CvInvoke.DestroyAllWindows();
 }
@@ -76,7 +102,7 @@ public class Piece
 		Image<Bgr, byte> outline = new Image<Bgr, byte>(image.Width, image.Height, new Bgr(0, 0, 0));
 		CvInvoke.DrawContours(outline, contours, puzzleContoursIndex, new MCvScalar(0, 255, 0), 1);
 
-		var d = new Emgu.CV.Features2D.GFTTDetector(4, 0.01, 100, 5);
+		var d = new Emgu.CV.Features2D.GFTTDetector(4, 0.01, 200, 5);
 		var corners = d.Detect(outline);
 
 		// 점을 시계방향으로 정렬
@@ -184,7 +210,7 @@ public class Piece
 				var otherHeads = other.Edges.Where(e => e.Type == EdgeType.Head);
 				foreach (var otherHead in otherHeads)
 				{
-					edge.Test(otherHead).Dump($"{Name} Hole,{other.Name} Head");
+					// edge.Test(otherHead).Dump($"{Name} Hole,{other.Name} Head");
 				}
 			}
 
@@ -193,7 +219,7 @@ public class Piece
 				var otherHoles = other.Edges.Where(e => e.Type == EdgeType.Hole);
 				foreach (var otherHole in otherHoles)
 				{
-					edge.Test(otherHole).Dump($"{Name} Head,{other.Name} Hole");
+					// edge.Test(otherHole).Dump($"{Name} Head,{other.Name} Hole");
 				}
 			}
 		}
@@ -218,6 +244,10 @@ public class Edge
 		Type = GetType(normalizedPoint);
 	}
 	
+	public bool IsHead => Type == EdgeType.Head;
+	public bool IsHole => Type == EdgeType.Hole;
+	public bool IsLine => Type == EdgeType.Line;
+	
 	private static EdgeType GetType(List<Point> normalizedPoint)
 	{
 		var maxY = Math.Abs(normalizedPoint.Max(p => p.Y));
@@ -240,45 +270,38 @@ public class Edge
 	
 	public double Test(Edge other)
 	{
-		double result = 0;
-		foreach (var point in other.Reverse().Points)
-		{
-			var minDistance = other.Points
-				.Min(otherPoint => Distance(point, otherPoint));
-			result += minDistance;
-		}
-		return result;
+		var reversed = other.Reverse();
+		
+		double distanceSum = Points
+			.Sum(thisPoint => reversed.Points.Min(otherPoint => Distance(thisPoint, otherPoint)));
+		
+		return distanceSum;
 	}
 	
 	public Edge Reverse()
 	{
-		Point first = Points.First();
-		Point last = Points.Last();
-		foreach (var point in Points)
-		{
-			if (first.X > point.X)
-			{
-				first = point;
-			}
-			if (last.X < point.X)
-			{
-				last = point;
-			}
-		}
+		Point first = Points.OrderBy(p => p.X).First();
+		Point last = Points.OrderBy(p => p.X).Last();
 
-		var reversed = new List<Point>();
 		var angle = CalculateAngleBetweenPoints(last, first);
+		var r = Points
+			.Select(p => new PointF(p.X - last.X, p.Y - last.Y))
+			.Select(p => RotatePointAroundOrigin(p, -angle))
+			.Select(p => new Point((int)p.X, (int)p.Y))
+			.ToList();
+
+		return new Edge(r);
+	}
+	
+	public void PrintTo(Image<Bgr, byte> board, Point basePoint, MCvScalar color)
+	{
 		foreach (var point in Points)
 		{
-			float x = point.X;
-			float y = point.Y;
-			x -= last.X;
-			y -= last.Y;
-			var rotatedPoint = RotatePointAroundOrigin(new PointF(x, y), -angle + Math.PI * 2);
-			reversed.Add(new Point((int)rotatedPoint.X, (int)rotatedPoint.Y));
+			var x = point.X + basePoint.X;
+			var y = point.Y + basePoint.Y;
+			
+			CvInvoke.Circle(board, new Point(x, y), 1, color, -1);
 		}
-		
-		return new Edge(reversed);
 	}
 }
 
