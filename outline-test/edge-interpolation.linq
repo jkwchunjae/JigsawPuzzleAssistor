@@ -20,11 +20,32 @@ void Main()
 	var fileName3 = "resize_20230804_225725.jpg";
 
 	var piece1 = new Piece(fileName1);
+	var piece2 = new Piece(fileName2);
+	var piece3 = new Piece(fileName3);
 
 	Image<Bgr, byte> board = new Image<Emgu.CV.Structure.Bgr, byte>(1000, 1000);
 
+	var heads = piece2.Edges.Where(e => e.IsHead)
+		.Concat(piece3.Edges.Where(e => e.IsHead))
+		.Select((x, i) => new { Piece = x, Index = i })
+		.ToList();
+
 	var hole = piece1.Edges.First(e => e.IsHole);
-	hole.PrintTo(board, new Point(300, 200), new MCvScalar(255, 255, 255));
+	foreach (var headItem in heads)
+	{
+		var index = headItem.Index;
+		var head = headItem.Piece;
+
+		var y = 200 + index * 200;
+
+		head.PrintTo(board, new Point(300, y), new MCvScalar(0, 255, 255));
+		hole.PrintTo(board, new Point(300, y), new MCvScalar(255, 255, 255));
+
+		head.Test(hole).Dump();
+
+		CvInvoke.Line(board, new Point(0, y), new Point(1000, y), new MCvScalar(255, 255, 255));
+	}
+
 
 	CvInvoke.Imshow("board", board);
 	CvInvoke.WaitKey();
