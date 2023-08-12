@@ -14,14 +14,17 @@
             <cv:CameraView x:Name="cameraView" HeightRequest="300" WidthRequest="300"
                            CamerasLoaded="cameraView_CamerasLoaded" />
 
+            <Label x:Name="Message" />
+
+            <Entry x:Name="puzzlePrefixText" Placeholder="prefix"/>
+            <Entry x:Name="puzzleNumberText" Placeholder="number" />
+            <Stepper x:Name="puzzleNumberStepper" />
+
             <Button
                 x:Name="CounterBtn"
                 Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Center" />
-
-            <Image x:Name="myImage" WidthRequest="200" HeightRequest="200"/>
 
         </VerticalStackLayout>
     </ScrollView>
