@@ -3,27 +3,29 @@
 using MainApp.Contracts.ViewModels;
 using MainApp.Core.Contracts.Services;
 using MainApp.Core.Models;
+using MainApp.Core.Services;
 
 namespace MainApp.ViewModels;
 
 public partial class SourceDetailViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly ISampleDataService _sampleDataService;
+    private readonly IPuzzleSourceService _puzzleSourceService;
 
     [ObservableProperty]
-    private SampleOrder? item;
+    private PuzzleSource? item;
 
-    public SourceDetailViewModel(ISampleDataService sampleDataService)
+    public SourceDetailViewModel(IPuzzleSourceService puzzleSourceService)
     {
-        _sampleDataService = sampleDataService;
+        _puzzleSourceService = puzzleSourceService;
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public void OnNavigatedTo(object parameter)
     {
-        if (parameter is long orderID)
+        if (parameter is string fileName)
         {
-            var data = await _sampleDataService.GetContentGridDataAsync();
-            Item = data.First(i => i.OrderID == orderID);
+            var path = @"D:\puzzle\0_source";
+            var data = _puzzleSourceService.GetSourceImageFiles(path);
+            Item = data.First(x => x.Name == fileName);
         }
     }
 

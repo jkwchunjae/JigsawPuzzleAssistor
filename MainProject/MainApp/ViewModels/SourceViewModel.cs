@@ -8,28 +8,29 @@ using MainApp.Contracts.Services;
 using MainApp.Contracts.ViewModels;
 using MainApp.Core.Contracts.Services;
 using MainApp.Core.Models;
+using MainApp.Core.Services;
 
 namespace MainApp.ViewModels;
 
 public partial class SourceViewModel : ObservableRecipient, INavigationAware
 {
     private readonly INavigationService _navigationService;
-    private readonly ISampleDataService _sampleDataService;
+    private readonly IPuzzleSourceService _puzzleSourceService;
 
-    public ObservableCollection<SampleOrder> Source { get; } = new ObservableCollection<SampleOrder>();
+    public ObservableCollection<PuzzleSource> Source { get; } = new ObservableCollection<PuzzleSource>();
 
-    public SourceViewModel(INavigationService navigationService, ISampleDataService sampleDataService)
+    public SourceViewModel(INavigationService navigationService, IPuzzleSourceService puzzleSourceService)
     {
         _navigationService = navigationService;
-        _sampleDataService = sampleDataService;
+        _puzzleSourceService = puzzleSourceService;
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public void OnNavigatedTo(object parameter)
     {
         Source.Clear();
 
-        // TODO: Replace with real data.
-        var data = await _sampleDataService.GetContentGridDataAsync();
+        var path = @"D:\puzzle\0_source";
+        var data = _puzzleSourceService.GetSourceImageFiles(path);
         foreach (var item in data)
         {
             Source.Add(item);
@@ -41,12 +42,12 @@ public partial class SourceViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void OnItemClick(SampleOrder? clickedItem)
+    private void OnItemClick(PuzzleSource? clickedItem)
     {
         if (clickedItem != null)
         {
             _navigationService.SetListDataItemForNextConnectedAnimation(clickedItem);
-            _navigationService.NavigateTo(typeof(SourceDetailViewModel).FullName!, clickedItem.OrderID);
+            _navigationService.NavigateTo(typeof(SourceDetailViewModel).FullName!, clickedItem.Name);
         }
     }
 }
