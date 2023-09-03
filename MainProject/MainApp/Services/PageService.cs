@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<PieceViewModel, PiecePage>();
         Configure<PieceDetailViewModel, PieceDetailPage>();
         Configure<SettingsViewModel, SettingsPage>();
+        Configure<CropViewModel, CropPage>();
     }
 
     public Type GetPageType(string key)

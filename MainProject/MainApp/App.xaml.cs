@@ -81,6 +81,8 @@ public partial class App : Application
                 services.AddTransient<SourceDetailPage>();
                 services.AddTransient<SourceViewModel>();
                 services.AddTransient<SourcePage>();
+                services.AddTransient<CropViewModel>();
+                services.AddTransient<CropPage>();
                 services.AddTransient<MainViewModel>();
                 services.AddTransient<MainPage>();
                 services.AddTransient<ShellPage>();
