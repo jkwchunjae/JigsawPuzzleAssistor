@@ -1,55 +1,37 @@
-﻿using Common.PieceInfo;
-using JkwExtensions;
-using PictureToData;
-using System.Text.Json;
+﻿using JkwExtensions;
+using MainCli;
 
-var imageDir = @"../../../../../puzzle-test/1_resize";
-var targetDir = @"../../../../output/piece-info";
-
-var files = Directory.GetFiles(imageDir);
-
-if (!Directory.Exists(targetDir))
+var commands = new string[]
 {
-    Directory.CreateDirectory(targetDir);
-}
-
-var processor = new SinglePieceImageProcessor();
-
-var serializeOption = new JsonSerializerOptions
-{
-    WriteIndented = true,
-    Converters =
-    {
-        new PointFJsonConverter(),
-        new PointArrayJsonConverter(),
-        new PointFArrayJsonConverter(),
-    },
+    "DebugCorner",
+    "PieceInfo",
 };
 
-var infos = await files
-    .Select(async file =>
-    {
-        try
-        {
-            return await processor.MakePieceInfoAsync(file);
-        }
-        catch (Exception ex)
-        {
-            var fileName = Path.GetFileNameWithoutExtension(file);
-            Console.WriteLine(ex.Message + " " + fileName);
-            return null;
-        }
-    })
-    .WhenAll();
+Console.WriteLine(
+    commands.Select((cmd, i) => $"[{i}]: {cmd}")
+        .StringJoin(Environment.NewLine)
+    );
 
-foreach (var (file, info) in files.Zip(infos))
+var input = Console.ReadLine();
+
+if (int.TryParse(input, out var index))
 {
-    var fileName = Path.GetFileNameWithoutExtension(file);
-    var targetPath = Path.Join(targetDir, $"{fileName}.json");
-    //Console.WriteLine(fileName);
-    if (info != null)
+    var cmd = commands[index];
+    if (cmd == "DebugCorner")
     {
-        await File.WriteAllTextAsync(targetPath, JsonSerializer.Serialize(info, serializeOption));
+        Console.WriteLine("Debug Corners !!");
+        await new DebugCorner().Run();
+        return;
     }
+    else if (cmd == "PieceInfo")
+    {
+        Console.WriteLine("Piece Info !!");
+        await new PieceInfoJson().Run();
+        return;
+    }
+}
+else
+{
+    Console.WriteLine(index + " is not valid index");
 }
 

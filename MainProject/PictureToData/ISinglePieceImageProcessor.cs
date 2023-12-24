@@ -6,6 +6,7 @@ namespace PictureToData;
 public interface ISinglePieceImageProcessor
 {
     Task<PieceInfo> MakePieceInfoAsync(string imagePath);
+    Task DebugAsync(string imagePath, string outputPath);
 }
 
 public class SinglePieceImageProcessor : ISinglePieceImageProcessor
@@ -45,6 +46,19 @@ public class SinglePieceImageProcessor : ISinglePieceImageProcessor
                 Length = edge.NormalizedCorner2.X,
             }).ToList(),
         };
+    }
+
+    public async Task DebugAsync(string imagePath, string outputPath)
+    {
+        var outline = new Outline(imagePath);
+        await outline.ProcessAsync();
+
+        var cornerDetector = new CornerDetector(outline);
+
+        var outlineImage = outline.GetImage();
+        cornerDetector.WriteTo(outlineImage, 10);
+
+        CvInvoke.Imwrite(outputPath, outlineImage);
     }
 }
 
