@@ -12,7 +12,7 @@ namespace PictureToData;
 
 internal class Edge
 {
-    public PointF[] OriginPoints;
+    public Point[] OriginPoints;
     public PointF OriginCorner1;
     public PointF OriginCorner2;
 
@@ -21,7 +21,7 @@ internal class Edge
     public PointF NormalizedCorner2;
 
     public EdgeType Type;
-    public Edge(IEnumerable<PointF> points, PointF corner1, PointF corner2)
+    public Edge(IEnumerable<Point> points, PointF corner1, PointF corner2)
     {
         OriginPoints = points.ToArray();
         OriginCorner1 = corner1;
@@ -39,7 +39,7 @@ internal class Edge
         }
     }
     public Edge(IEnumerable<Point> points, Point corner1, Point corner2)
-        : this(points.Select(p => (PointF)p), corner1, corner2)
+        : this(points, (PointF)corner1, (PointF)corner2)
     {
     }
 
@@ -78,7 +78,7 @@ internal class Edge
         return distanceSum;
     }
 
-    public static (PointF[] Points, PointF Corner1, PointF Corner2) Normalize(IEnumerable<PointF> points, PointF corner1, PointF corner2)
+    public static (PointF[] Points, PointF Corner1, PointF Corner2) Normalize(IEnumerable<Point> points, PointF corner1, PointF corner2)
     {
         var angle = Utils.CalculateAngleBetweenPoints(corner1, corner2);
         var result = points
@@ -117,7 +117,7 @@ internal class Edge
         foreach (var point in OriginPoints)
         {
             //image[point.ToPoint()] = color;
-            CvInvoke.Circle(image, point.ToPoint(), 1, color.ToScalar(), -1);
+            CvInvoke.Circle(image, point, 1, color.ToScalar(), -1);
         }
     }
 }

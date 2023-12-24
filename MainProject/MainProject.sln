@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zTest_Common", "zTest_Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zTest_PictureToData", "zTest_PictureToData\zTest_PictureToData.csproj", "{97931F69-B39D-4AC6-9D7C-51CCF1FCB58C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainCli", "MainCli\MainCli.csproj", "{CA86D0D7-F629-4AE8-93D6-A2E9BDFE915F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{97931F69-B39D-4AC6-9D7C-51CCF1FCB58C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97931F69-B39D-4AC6-9D7C-51CCF1FCB58C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97931F69-B39D-4AC6-9D7C-51CCF1FCB58C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA86D0D7-F629-4AE8-93D6-A2E9BDFE915F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA86D0D7-F629-4AE8-93D6-A2E9BDFE915F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA86D0D7-F629-4AE8-93D6-A2E9BDFE915F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA86D0D7-F629-4AE8-93D6-A2E9BDFE915F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

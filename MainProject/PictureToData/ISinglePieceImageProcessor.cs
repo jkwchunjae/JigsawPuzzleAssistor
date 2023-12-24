@@ -31,17 +31,18 @@ public class SinglePieceImageProcessor : ISinglePieceImageProcessor
 
         return new PieceInfo
         {
-            Outline = outline.GetContour(),
+            //Outline = outline.GetContour(),
             Corners = corners,
             Edges = piece.Edges.Select(edge => new EdgeInfo
             {
                 Type = edge.Type,
-                OriginPoints = edge.OriginPoints,
-                OriginCorner1 = edge.OriginCorner1,
-                OriginCorner2 = edge.OriginCorner2,
+                //OriginPoints = edge.OriginPoints,
+                //OriginCorner1 = edge.OriginCorner1,
+                //OriginCorner2 = edge.OriginCorner2,
                 NormalizedPoints = edge.NormalizedPoints,
-                NormalizedCorner1 = edge.NormalizedCorner1,
-                NormalizedCorner2 = edge.NormalizedCorner2,
+                //NormalizedCorner1 = edge.NormalizedCorner1,
+                //NormalizedCorner2 = edge.NormalizedCorner2,
+                Length = edge.NormalizedCorner2.X,
             }).ToList(),
         };
     }

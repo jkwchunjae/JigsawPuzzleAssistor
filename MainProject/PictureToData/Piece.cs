@@ -69,7 +69,7 @@ internal class Piece
                     points.Add(orderedContour.First());
                 }
 
-                return new Edge(points.Select(p => (PointF)p), corner, nextCorner);
+                return new Edge(points, corner, nextCorner);
             })
             .ToList();
     }
