@@ -18,7 +18,7 @@ public class PointFJsonConverter : JsonConverter<PointF>
 
     public override void Write(Utf8JsonWriter writer, PointF point, JsonSerializerOptions options)
     {
-        var pointText = $"({point.X}, {point.Y})";
+        var pointText = $"({point.X:0.000}, {point.Y:0.000})";
         writer.WriteStringValue(pointText);
     }
 }

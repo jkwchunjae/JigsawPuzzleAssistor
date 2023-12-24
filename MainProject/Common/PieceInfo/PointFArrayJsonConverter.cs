@@ -24,7 +24,7 @@ public class PointFArrayJsonConverter : JsonConverter<PointF[]>
 
     public override void Write(Utf8JsonWriter writer, PointF[] points, JsonSerializerOptions options)
     {
-        var pointArrayText = points.Select(p => $"({p.X}, {p.Y})").StringJoin("[", ", ", "]");
+        var pointArrayText = points.Select(p => $"({p.X:0.000}, {p.Y:0.000})").StringJoin("[", ", ", "]");
         writer.WriteStringValue(pointArrayText);
     }
 }

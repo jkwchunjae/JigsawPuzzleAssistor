@@ -24,7 +24,7 @@ public class PointConverterTest
         var pointJsonText = JsonSerializer.Serialize(obj, option);
 
         var expected = @"{
-  ""Point"": ""(1.78, 2.874)""
+  ""Point"": ""(1.780, 2.874)""
 }";
         Assert.Equal(expected, pointJsonText);
     }
@@ -83,7 +83,7 @@ public class PointConverterTest
 
         var expected = @"{
   ""Points"": ""[(1, 2), (3, 4)]"",
-  ""Pointfs"": ""[(1.78, 2.874), (3, 4)]""
+  ""Pointfs"": ""[(1.780, 2.874), (3.000, 4.000)]""
 }";
         Assert.Equal(expected, pointJsonText);
     }
@@ -93,7 +93,7 @@ public class PointConverterTest
     {
         var pointJsonText = @"{
   ""Points"": ""[(1, 2), (3, 4)]"",
-  ""Pointfs"": ""[(1.78, 2.874), (3, 4)]""
+  ""Pointfs"": ""[(1.780, 2.874), (3.000, 4.000)]""
 }";
         var option = new JsonSerializerOptions
         {
