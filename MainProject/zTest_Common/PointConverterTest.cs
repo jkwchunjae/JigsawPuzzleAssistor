@@ -48,28 +48,42 @@ public class PointConverterTest
 
     class PointArrayClass
     {
-        public PointF[] Points { get; set; }
+        public Point[] Points { get; set; }
+        public PointF[] Pointfs { get; set; }
     }
 
     [Fact]
     public void PointArray_serialize_test()
     {
-        var points = new PointF[]
+        var points = new Point[]
+        {
+            new(1, 2),
+            new(3, 4),
+        };
+        var pointfs = new PointF[]
         {
             new(1.78f, 2.874f),
             new(3, 4),
         };
-        var obj = new PointArrayClass { Points = points };
+        var obj = new PointArrayClass
+        {
+            Points = points,
+            Pointfs = pointfs,
+        };
 
         var option = new JsonSerializerOptions
         {
             WriteIndented = true,
-            Converters = { new PointArrayJsonConverter() },
+            Converters = {
+                new PointArrayJsonConverter(),
+                new PointFArrayJsonConverter(),
+            },
         };
         var pointJsonText = JsonSerializer.Serialize(obj, option);
 
         var expected = @"{
-  ""Points"": ""[(1.78, 2.874), (3, 4)]""
+  ""Points"": ""[(1, 2), (3, 4)]"",
+  ""Pointfs"": ""[(1.78, 2.874), (3, 4)]""
 }";
         Assert.Equal(expected, pointJsonText);
     }
@@ -78,20 +92,30 @@ public class PointConverterTest
     public void PointArray_deserialize_test()
     {
         var pointJsonText = @"{
-  ""Points"": ""[(1.78, 2.874), (3, 4)]""
+  ""Points"": ""[(1, 2), (3, 4)]"",
+  ""Pointfs"": ""[(1.78, 2.874), (3, 4)]""
 }";
         var option = new JsonSerializerOptions
         {
             WriteIndented = true,
-            Converters = { new PointArrayJsonConverter() },
+            Converters = {
+                new PointArrayJsonConverter(),
+                new PointFArrayJsonConverter(),
+            },
         };
         var obj = JsonSerializer.Deserialize<PointArrayClass>(pointJsonText, option);
 
-        var expected = new PointF[]
+        var expectedPoints = new Point[]
+        {
+            new(1, 2),
+            new(3, 4),
+        };
+        var expectedPointfs = new PointF[]
         {
             new(1.78f, 2.874f),
             new(3, 4),
         };
-        Assert.Equal(expected, obj!.Points);
+        Assert.Equal(expectedPoints, obj!.Points);
+        Assert.Equal(expectedPointfs, obj!.Pointfs);
     }
 }
