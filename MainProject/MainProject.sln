@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1705.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SquareGraph", "SquareGraph\SquareGraph.csproj", "{C8CDA1FE-25AE-42E5-A91F-3F4D5E5BDAD8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zTest_SquareGraph", "zTest_SquareGraph\zTest_SquareGraph.csproj", "{4A74774E-5B3C-4D10-9370-1083370CFCA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{0B136F50-B5FB-461C-81CF-CE37D4028C7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zTest_Common", "zTest_Common\zTest_Common.csproj", "{E1297CCF-DC74-42F7-8708-CFB3E7A77A4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{4A74774E-5B3C-4D10-9370-1083370CFCA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A74774E-5B3C-4D10-9370-1083370CFCA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A74774E-5B3C-4D10-9370-1083370CFCA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B136F50-B5FB-461C-81CF-CE37D4028C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B136F50-B5FB-461C-81CF-CE37D4028C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B136F50-B5FB-461C-81CF-CE37D4028C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B136F50-B5FB-461C-81CF-CE37D4028C7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1297CCF-DC74-42F7-8708-CFB3E7A77A4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1297CCF-DC74-42F7-8708-CFB3E7A77A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1297CCF-DC74-42F7-8708-CFB3E7A77A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1297CCF-DC74-42F7-8708-CFB3E7A77A4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
