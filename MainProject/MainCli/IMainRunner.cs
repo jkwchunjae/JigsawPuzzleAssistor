@@ -1,0 +1,4 @@
+﻿interface IMainRunner
+{
+    Task Run();
+}

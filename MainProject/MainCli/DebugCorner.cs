@@ -3,7 +3,7 @@ using PictureToData;
 
 namespace MainCli;
 
-internal class DebugCorner
+internal class DebugCorner : IMainRunner
 {
     public async Task Run()
     {

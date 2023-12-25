@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace MainCli;
 
-internal class PieceInfoJson
+internal class PieceInfoJson : IMainRunner
 {
     public async Task Run()
     {

@@ -1,37 +1,27 @@
 ﻿using JkwExtensions;
 using MainCli;
 
-var commands = new string[]
+var commands = new List<(string Command, IMainRunner Runner)>
 {
-    "DebugCorner",
-    "PieceInfo",
+    ("Crop", new PuzzleCrop()),
+    ("DebugCorner", new DebugCorner()),
+    ("PieceInfo", new PieceInfoJson()),
 };
 
 Console.WriteLine(
-    commands.Select((cmd, i) => $"[{i}]: {cmd}")
+    commands.Select((cmd, i) => $"[{i}]: {cmd.Command}")
         .StringJoin(Environment.NewLine)
     );
 
 var input = Console.ReadLine();
 
-if (int.TryParse(input, out var index))
+if (int.TryParse(input, out var index) && index < commands.Count)
 {
-    var cmd = commands[index];
-    if (cmd == "DebugCorner")
-    {
-        Console.WriteLine("Debug Corners !!");
-        await new DebugCorner().Run();
-        return;
-    }
-    else if (cmd == "PieceInfo")
-    {
-        Console.WriteLine("Piece Info !!");
-        await new PieceInfoJson().Run();
-        return;
-    }
+    var runner = commands[index].Runner;
+    Console.WriteLine($"{index}: {commands[index].Command} !!");
+    await runner.Run();
 }
 else
 {
     Console.WriteLine(index + " is not valid index");
 }
-
