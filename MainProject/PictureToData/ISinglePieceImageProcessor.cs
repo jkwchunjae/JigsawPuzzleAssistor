@@ -7,6 +7,7 @@ namespace PictureToData;
 public interface ISinglePieceImageProcessor
 {
     Task<PieceInfo> MakePieceInfoAsync(string imagePath);
+    Task<PieceInfo> MakePieceInfoWithPredefinedCornerAsync(string imagePath, PointF[] predefinedCorner);
     Task DebugAsync(string imagePath, string outputPath);
 }
 

@@ -1,7 +1,19 @@
 ﻿@page "/"
 
-<SelectCorner Image="@input"></SelectCorner>
+<div>
+    <input @bind-value="filename" />
+</div>
+<div>
+    <SelectCorner
+        Image="@input"
+        Output="@output"
+        Temp="@temp"
+    ></SelectCorner>
+</div>
 
 @code {
-    string input = @"C:\Users\jkwchunjae\Documents\GitHub\JigsawPuzzleSolver\puzzle-test\1_resize\puzzle_00001.jpg";
+    string filename = "puzzle_00001.jpg";
+    string input => @$"D:\jkw\major\GitHub\JigsawPuzzleSolver\puzzle-test\1_resize\{filename}";
+    string output => @$"D:\jkw\major\GitHub\JigsawPuzzleSolver\MainProject\output\piece-info\{Path.GetFileNameWithoutExtension(filename)}.json";
+    string temp => @$"D:\jkw\major\GitHub\JigsawPuzzleSolver\MainProject\output\temp\{Path.GetFileNameWithoutExtension(filename)}.png";
 }

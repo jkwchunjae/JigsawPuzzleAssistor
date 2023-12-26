@@ -58,8 +58,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Emgu.CV" Version="4.8.1.5350" />
-        <PackageReference Include="Emgu.CV.runtime.windows" Version="4.8.1.5350" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
@@ -67,6 +65,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\PictureToData\PictureToData.csproj" />
     </ItemGroup>
 

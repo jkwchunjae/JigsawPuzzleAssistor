@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Common.PieceInfo;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using PictureToData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SelectCornersManually.Components.Pages;
@@ -13,8 +15,11 @@ public partial class SelectCorner : ComponentBase
 {
     [Inject] IJSRuntime? Js { get; set; }
     [Parameter] public string Image { get; set; }
+    [Parameter] public string Output { get; set; }
+    [Parameter] public string Temp { get; set; }
 
     PieceService PieceService { get; set; }
+    ISinglePieceImageProcessor SinglePieceImageProcessor { get; set; }
 
     string CornerImage = string.Empty;
     System.Drawing.PointF[] corners = null;
@@ -25,6 +30,13 @@ public partial class SelectCorner : ComponentBase
         await base.OnInitializedAsync();
 
         PieceService = new PieceService();
+        SinglePieceImageProcessor = new SinglePieceImageProcessor();
+    }
+
+    protected override void OnParametersSet()
+    {
+        corners = null;
+        selected = null;
     }
 
     private async Task Click(Point point)
@@ -58,7 +70,7 @@ public partial class SelectCorner : ComponentBase
         var argument = new CornerDetectArgument
         {
             MaxCorners = 20,
-            BlockSize = 9,
+            BlockSize = 5,
             MinDistance = 30,
             QualityLevel = 0.01,
         };
@@ -81,13 +93,27 @@ public partial class SelectCorner : ComponentBase
         CornerImage = outputPath;
     }
 
+    private async Task CreatePieceInfo()
+    {
+        var pieceInfo = await SinglePieceImageProcessor.MakePieceInfoWithPredefinedCornerAsync(Image, selected.ToArray());
+
+        var serializeOption = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters =
+            {
+                new PointFJsonConverter(),
+                new PointArrayJsonConverter(),
+                new PointFArrayJsonConverter(),
+            },
+        };
+
+        await File.WriteAllTextAsync(Output, JsonSerializer.Serialize(pieceInfo, serializeOption));
+    }
+
     private string GetOutputPath(string imagePath)
     {
-        var filename = Path.GetFileNameWithoutExtension(imagePath);
-        var outputName = $"{filename}.png";
-        var tempDir = Path.Join(Directory.GetParent(imagePath).Parent.FullName, "temp");
-        var outputPath = Path.Join(tempDir, outputName);
-        return outputPath;
+        return Temp;
     }
     static double Distance(System.Drawing.PointF p1, System.Drawing.PointF p2)
     {
