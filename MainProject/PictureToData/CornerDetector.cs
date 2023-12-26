@@ -9,6 +9,14 @@ using System.Threading.Tasks;
 
 namespace PictureToData;
 
+public class CornerDetectArgument
+{
+    public int MaxCorners { get; set; }
+    public double QualityLevel { get; set; }
+    public double MinDistance { get; set; }
+    public int BlockSize { get; set; }
+}
+
 internal class CornerDetector
 {
     public string Name => Outline.Name;
@@ -18,14 +26,12 @@ internal class CornerDetector
     public CornerDetector(Outline outline)
     {
         Outline = outline;
-
-        Process();
     }
 
-    private void Process()
+    public PointF[] Process()
     {
         if (Corners != null)
-            return;
+            return Corners;
 
         var d = new Emgu.CV.Features2D.GFTTDetector(4, 0.01, 200, 9);
         var corners = d.Detect(Outline.GetImage());
@@ -44,8 +50,36 @@ internal class CornerDetector
             .Select(c => c.Point)
             .Select(p => (PointF)NewCorner3(p.ToPoint()))
             .ToArray();
+
+        return Corners;
     }
 
+    public PointF[] ProcessWithPredefinedCorner(PointF[] corners)
+    {
+        // 점을 시계방향으로 정렬
+        var baseCorner = corners.OrderBy(c => c.Y).First();
+        var otherCorners = corners.OrderBy(c => c.Y).Skip(1).ToArray();
+        otherCorners = otherCorners
+            .Select(corner => new { Corner = corner, Angle = Utils.CalculateAngleBetweenPoints(baseCorner, corner) })
+            .OrderBy(c => c.Angle)
+            .Select(x => x.Corner)
+            .ToArray();
+        var orderedCorner = new[] { baseCorner }.Concat(otherCorners).ToArray();
+
+        Corners = orderedCorner
+            .Select(p => (PointF)NewCorner3(p.ToPoint()))
+            .ToArray();
+
+        return Corners;
+    }
+
+    public PointF[] GetCornerWithArgument(CornerDetectArgument arg)
+    {
+        var d = new Emgu.CV.Features2D.GFTTDetector(arg.MaxCorners, arg.QualityLevel, arg.MinDistance, arg.BlockSize);
+        var corners = d.Detect(Outline.GetImage());
+
+        return corners.Select(point => point.Point).ToArray();
+    }
 
     public Point NewCorner3(Point corner)
     {

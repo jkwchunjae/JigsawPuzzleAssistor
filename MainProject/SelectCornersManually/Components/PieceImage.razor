@@ -1,0 +1,38 @@
+﻿
+@if (!string.IsNullOrEmpty(base64ImageSrc))
+{
+    <img src="@base64ImageSrc" @onclick="ClickImage"/>
+}
+
+@code {
+    [Parameter]
+    public string Path { get; set; }
+
+    [Parameter]
+    public EventCallback<Point> OnClick { get; set; }
+
+    private string base64ImageSrc = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (File.Exists(Path))
+        {
+            var imageBytes = await File.ReadAllBytesAsync(Path);
+            var imageBase64 = Convert.ToBase64String(imageBytes);
+
+            this.base64ImageSrc = $"data:image/png;base64,{imageBase64}";
+        }
+    }
+
+    private async Task ClickImage(MouseEventArgs e)
+    {
+        var targetPoint = new Point
+        {
+            X = e.OffsetX,
+            Y = e.OffsetY,
+        };
+        await OnClick.InvokeAsync(targetPoint);
+    }
+}
