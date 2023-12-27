@@ -6,6 +6,7 @@ var commands = new List<(string Command, IMainRunner Runner)>
     ("Crop", new PuzzleCrop()),
     ("DebugCorner", new DebugCorner()),
     ("PieceInfo", new PieceInfoJson()),
+    ("ConnecInfo", new ConnectInfoJson()),
 };
 
 Console.WriteLine(
