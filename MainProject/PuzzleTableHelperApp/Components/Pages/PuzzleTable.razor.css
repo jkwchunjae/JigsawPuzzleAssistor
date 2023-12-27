@@ -1,0 +1,9 @@
+table.puzzle-table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+table.puzzle-table div {
+    min-width: 50px;
+    min-height: 50px;
+}
