@@ -34,6 +34,7 @@ public class SinglePieceImageProcessor : ISinglePieceImageProcessor
 
         return new PieceInfo
         {
+            Name = Path.GetFileNameWithoutExtension(imagePath),
             //Outline = outline.GetContour(),
             Corners = corners,
             Edges = piece.Edges.Select(edge => new EdgeInfo
@@ -71,6 +72,7 @@ public class SinglePieceImageProcessor : ISinglePieceImageProcessor
 
         return new PieceInfo
         {
+            Name = Path.GetFileNameWithoutExtension(imagePath),
             //Outline = outline.GetContour(),
             Corners = corners,
             Edges = piece.Edges.Select(edge => new EdgeInfo
