@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PictureToData\PictureToData.csproj" />
     <ProjectReference Include="..\PuzzleCropper\PuzzleCropper.csproj" />
+    <ProjectReference Include="..\PuzzleTableHelperCore\PuzzleTableHelperCore.csproj" />
   </ItemGroup>
 
 </Project>
