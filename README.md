@@ -1,2 +1,6 @@
-# JigsawPuzzleSolver
-goal: Solve very difficult 2000 pieces puzzle: https://www.puzzlegallery.co.kr/shop/goods/goods_view.php?goodsno=36400
+# JigsawPuzzleAssistor
+
+GOAL: Solve very difficult 2000 pieces puzzle
+
+![OnePiece Luffy](onepiece_luffy_2000.jpg)
+
