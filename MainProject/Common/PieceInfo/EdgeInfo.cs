@@ -12,5 +12,59 @@ public class EdgeInfo
     //public required PointF NormalizedCorner2 { get; set; }
     public required float Length { get; set; }
     public required EdgeType Type { get; set; }
+
+    private Dictionary<EdgeType, EdgeType> AllowTypeMap = new()
+    {
+        { EdgeType.Head, EdgeType.Hole },
+        { EdgeType.Hole, EdgeType.Head },
+        { EdgeType.Line, EdgeType.None },
+    };
+
+    public (bool Result, float Value) Test(EdgeInfo other)
+    {
+        var allowType = AllowTypeMap[Type];
+        if (other.Type != allowType)
+        {
+            return (false, 0);
+        }
+
+        if (!CheckLength(Length, other.Length))
+        {
+            // 길이가 10% 이내로 차이나면 true
+            return (false, 0);
+        }
+
+        var shortPoints = NormalizedPoints.Length < other.NormalizedPoints.Length ? NormalizedPoints : other.NormalizedPoints;
+        var longPoints = NormalizedPoints.Length < other.NormalizedPoints.Length ? other.NormalizedPoints : NormalizedPoints;
+
+        float distanceSum = shortPoints
+            .Sum(left => longPoints.Min(right => Distance(left, right)));
+        var result = distanceSum / shortPoints.Length;
+
+        if (result < 5)
+        {
+            // 5 이내로 차이나면 true
+            return (true, result);
+        }
+        else
+        {
+            return (false, 0);
+        }
+
+        bool CheckLength(float a, float b)
+        {
+            // 10% 이내로 차이나면 true
+            var min = Math.Min(a, b);
+            var max = Math.Max(a, b);
+            return (max - min) / min < 0.1;
+        }
+
+        float Distance(PointF a, PointF b)
+        {
+            var x = a.X - b.X;
+            var y = a.Y - b.Y;
+            return (float)Math.Sqrt(x * x + y * y);
+        }
+    }
 }
 
