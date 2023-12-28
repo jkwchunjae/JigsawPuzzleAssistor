@@ -30,7 +30,7 @@ public class EdgeInfo
 
         if (!CheckLength(Length, other.Length))
         {
-            // 길이가 10% 이내로 차이나면 true
+            // 길이가 3% 이내로 차이나면 true
             return (false, 0);
         }
 
@@ -53,10 +53,10 @@ public class EdgeInfo
 
         bool CheckLength(float a, float b)
         {
-            // 10% 이내로 차이나면 true
+            // 3% 이내로 차이나면 true
             var min = Math.Min(a, b);
             var max = Math.Max(a, b);
-            return (max - min) / min < 0.1;
+            return (max - min) / min < 0.03;
         }
 
         float Distance(PointF a, PointF b)
