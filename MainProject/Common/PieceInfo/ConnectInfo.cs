@@ -8,21 +8,6 @@ public class ConnectInfo
 {
     public required string PieceName { get; set; }
     public required ConnectEdge[] Edges { get; set; }
-
-    public IEnumerable<(int MyEdge, int OtherEdge, float Value)> Test(PieceInfo me, PieceInfo other, ConnectInfo otherConnectInfo)
-    {
-        for (var i = 0; i < me.Edges.Count; i++)
-        {
-            for (var j = 0; j < other.Edges.Count; j++)
-            {
-                var (result, value) = me.Edges[i].Test(other.Edges[j]);
-                if (result)
-                {
-                    yield return (i, j, value);
-                }
-            }
-        }
-    }
 }
 
 public class ConnectEdge

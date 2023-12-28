@@ -7,6 +7,7 @@ namespace SquareGraphLib;
 public class SquareNode
 {
     public int No { get; set; }
+    public string Name { get; set; }
     public SquareEdge[] Edges { get; init; }
 
     public SquareEdge Top => Edges[0];
@@ -18,17 +19,19 @@ public class SquareNode
     public bool IsBorder => Edges.Count(edge => edge.IsBorder) == 1;
     public bool IsInner => Edges.Count(edge => edge.IsBorder) == 0;
 
-    public SquareNode(int no)
+    public SquareNode(int no, string name)
     {
         No = no;
+        Name = name;
         Edges = Enumerable.Range(0, 4)
             .Select(_ => new SquareEdge(this))
             .ToArray();
     }
 
-    public SquareNode(int no, SquareEdge[] edges)
+    public SquareNode(int no, string name, SquareEdge[] edges)
     {
         No = no;
+        Name = name;
         Edges = edges;
     }
 
@@ -53,7 +56,7 @@ public class SquareNode
     public SquareNode RotateRight()
     {
         var newEdges = new [] { Left, Top, Right, Bottom };
-        var node = new SquareNode(No, newEdges);
+        var node = new SquareNode(No, Name, newEdges);
 
         return node;
     }
@@ -61,7 +64,7 @@ public class SquareNode
     public SquareNode RotateLeft()
     {
         var newEdges = new [] { Right, Bottom, Left, Top };
-        var node = new SquareNode(No, newEdges);
+        var node = new SquareNode(No, Name, newEdges);
 
         return node;
     }

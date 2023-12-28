@@ -64,7 +64,7 @@ internal class ConnectInfoJson : IMainRunner
                     var (otherIndex, otherInfo, otherConnectInfo) = other;
 
                     // Test is heavy operation
-                    return myConnectInfo.Test(myInfo, otherInfo, otherConnectInfo)
+                    return Test(myInfo, otherInfo)
                         .Select(x =>
                         {
                             var (myEdge, otherEdge, value) = x;
@@ -106,6 +106,8 @@ internal class ConnectInfoJson : IMainRunner
                     Index = x.Index,
                     Connection = x.Connection
                         .OrderBy(x => x.Value)
+                        .GroupBy(x => x.PieceName)
+                        .Select(x => x.First())
                         .ToList(),
                 })
                 .ToArray();
@@ -125,5 +127,20 @@ internal class ConnectInfoJson : IMainRunner
         var pieceInfo = JsonSerializer.Deserialize<PieceInfo>(text, serializeOption);
 
         return pieceInfo;
+    }
+
+    private IEnumerable<(int MyEdge, int OtherEdge, float Value)> Test(PieceInfo me, PieceInfo other)
+    {
+        for (var i = 0; i < me.Edges.Count; i++)
+        {
+            for (var j = 0; j < other.Edges.Count; j++)
+            {
+                var (result, value) = me.Edges[i].Test(other.Edges[j]);
+                if (result)
+                {
+                    yield return (i, j, value);
+                }
+            }
+        }
     }
 }

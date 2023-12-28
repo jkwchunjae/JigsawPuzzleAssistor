@@ -4,10 +4,10 @@ public class SquareGraph
 {
     public List<SquareNode> Nodes { get; init; }
 
-    public SquareGraph(int nodeCount)
+    public SquareGraph(int nodeCount, string[] names)
     {
         Nodes = Enumerable.Range(1, nodeCount)
-            .Select(no => new SquareNode(no))
+            .Select(no => new SquareNode(no, names[no - 1]))
             .ToList();
     }
 

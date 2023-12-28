@@ -7,6 +7,7 @@ var commands = new List<(string Command, IMainRunner Runner)>
     ("DebugCorner", new DebugCorner()),
     ("PieceInfo", new PieceInfoJson()),
     ("ConnecInfo", new ConnectInfoJson()),
+    ("FindTargetTest", new FindTargetTest()),
 };
 
 Console.WriteLine(

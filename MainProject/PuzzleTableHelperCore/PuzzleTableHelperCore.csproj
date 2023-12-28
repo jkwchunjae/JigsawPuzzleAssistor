@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\SquareGraph\SquareGraph.csproj" />
   </ItemGroup>
 </Project>

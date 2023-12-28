@@ -19,7 +19,7 @@ public class PuzzleTableJsonConverter : JsonConverter<PuzzleTable>
             throw new JsonException();
         reader.Read();
 
-        var cells = new List<List<PuzzleCell>>();
+        var cells = new List<List<PuzzleCell?>>();
         while (reader.TokenType != JsonTokenType.EndArray)
         {
             if (reader.TokenType != JsonTokenType.String)
@@ -28,23 +28,30 @@ public class PuzzleTableJsonConverter : JsonConverter<PuzzleTable>
             var sep = new[] { ' ' };
             var arr = text!.Split(sep, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-            var row = new List<PuzzleCell>();
+            var row = new List<PuzzleCell?>();
             for (var i = 0; i < arr.Length; i++)
             {
-                var sep2 = new[] { ',', '(', ')' };
-                var arr2 = arr[i].Split(sep2, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-                var pieceNumber = int.Parse(arr2[0]);
-                var topEdgeIndex = int.Parse(arr2[1]);
-
-                row.Add(new PuzzleCell
+                if (arr[i] == "null")
                 {
-                    Row = cells.Count,
-                    Column = i,
-                    PieceName = $"Piece_{pieceNumber:00000}",
-                    PieceNumber = pieceNumber,
-                    TopEdgeIndex = topEdgeIndex,
-                });
+                    row.Add(null);
+                }
+                else
+                {
+                    var sep2 = new[] { ',', '(', ')' };
+                    var arr2 = arr[i].Split(sep2, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+                    var pieceNumber = int.Parse(arr2[0]);
+                    var topEdgeIndex = int.Parse(arr2[1]);
+
+                    row.Add(new PuzzleCell
+                    {
+                        Row = cells.Count,
+                        Column = i,
+                        PieceName = $"puzzle_{pieceNumber:00000}",
+                        PieceNumber = pieceNumber,
+                        TopEdgeIndex = topEdgeIndex,
+                    });
+                }
             }
             cells.Add(row);
 
@@ -62,7 +69,7 @@ public class PuzzleTableJsonConverter : JsonConverter<PuzzleTable>
         writer.WriteStartArray();
         foreach (var row in value.Cells)
         {
-            var rowText = row.Select(x => $"({x.PieceNumber},{x.TopEdgeIndex})")
+            var rowText = row.Select(x => x == null ? "null" : $"({x.PieceNumber},{x.TopEdgeIndex})")
                 .StringJoin(" ");
             writer.WriteStringValue(rowText);
         }

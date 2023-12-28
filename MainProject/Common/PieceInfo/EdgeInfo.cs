@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Text.Json.Serialization;
 
 namespace Common.PieceInfo;
 
@@ -12,6 +13,10 @@ public class EdgeInfo
     //public required PointF NormalizedCorner2 { get; set; }
     public required float Length { get; set; }
     public required EdgeType Type { get; set; }
+
+    [JsonIgnore] public bool IsLine => Type == EdgeType.Line;
+    [JsonIgnore] public bool IsHead => Type == EdgeType.Head;
+    [JsonIgnore] public bool IsHole => Type == EdgeType.Hole;
 
     private Dictionary<EdgeType, EdgeType> AllowTypeMap = new()
     {
