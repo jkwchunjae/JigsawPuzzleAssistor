@@ -1,0 +1,62 @@
+@page "/puzzle-table"
+@using PuzzleTableHelperCore;
+
+<PageTitle>Puzzle Table</PageTitle>
+
+@if (_puzzleTable != null)
+{
+<table class="puzzle-table">
+    <tr>
+        <td></td>
+        @for (int column = 0; column < _puzzleTable.ColumnCount + 1; column++)
+        {
+            <td class="header">
+                <div>
+                    <span>@column</span>
+                </div>
+            </td>
+        }
+    </tr>
+    @for (int rowIndex = 0; rowIndex < _puzzleTable.RowCount + 1; rowIndex++)
+    {
+        var row = rowIndex;
+        <tr>
+            <td class="header">
+                <div>
+                    <span>@row</span>
+                </div>
+            </td>
+            @for (int columnIndex = 0; columnIndex < _puzzleTable.ColumnCount + 1; columnIndex++)
+            {
+                var column = columnIndex;
+                PuzzleCell? cell = _puzzleTable.GetCell(row, column);
+                if (cell is null)
+                {
+                    <td class="cell">
+                        <div>
+                            @if (IsTarget(row, column))
+                            {
+                                <button @onclick="@(e => RemoveTarget(row, column))">-</button>
+                            }
+                            else
+                            {
+                                <MudButton OnClick="(() => AddTarget(row, column))">+</MudButton>
+                            }
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td class="cell">
+                        <div>
+                            <span>
+                            @cell!.PieceNumber
+                            </span>
+                        </div>
+                    </td>
+                }
+            }
+        </tr>
+    }
+</table>
+}

@@ -5,7 +5,7 @@ namespace MainCli;
 
 internal class FindTargetTest : IMainRunner
 {
-    public Task Run()
+    public async Task Run()
     {
         var service = new PuzzleTableService(new PuzzleTableServiceOption
         {
@@ -13,6 +13,7 @@ internal class FindTargetTest : IMainRunner
             ConnectInfoDirectory = @"/Users/jkwchunjae/Documents/GitHub/JigsawPuzzleSolver/MainProject/connection-info",
             PuzzleTableFilePath = @"/Users/jkwchunjae/Documents/GitHub/JigsawPuzzleSolver/MainProject/puzzle-table.json"
         });
+        await service.LoadFilesAsync();
 
         var limit = 7;
         var targets = new List<(int, int)>
@@ -23,7 +24,5 @@ internal class FindTargetTest : IMainRunner
         var suggestionSets = service.FindTarget(limit, targets).ToArray();
 
         Console.WriteLine(suggestionSets.Length);
-
-        return Task.CompletedTask;
     }
 }

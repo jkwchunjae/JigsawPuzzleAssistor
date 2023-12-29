@@ -1,0 +1,30 @@
+table.puzzle-table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+table.puzzle-table div {
+}
+
+td.header div {
+    width: 50px;
+    height: 30px;
+    display: flex;
+}
+td.header div span {
+    margin: auto;
+}
+
+td.cell {
+    border: 1px solid rgb(216, 216, 216);
+}
+
+td.cell div {
+    width: 50px;
+    height: 40px;
+    display: flex;
+}
+
+td.cell div span {
+    margin: auto;
+}

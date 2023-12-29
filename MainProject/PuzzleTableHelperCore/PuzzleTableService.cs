@@ -25,18 +25,13 @@ public class PuzzleTableService
     private SquareGraph _squareGraph = null;
     private List<SquareNode> _nodes => _squareGraph.Nodes;
 
+    public PuzzleTable PuzzleTable => _puzzleTable;
+
     public PuzzleTableService(PuzzleTableServiceOption option)
     {
         _pieceInfoDirectory = option.PieceInfoDirectory;
         _connectInfoDirectory = option.ConnectInfoDirectory;
         _puzzleTableFilePath = option.PuzzleTableFilePath;
-
-        LoadFilesAsync().Wait();
-
-        _squareGraph = new SquareGraphBuilder()
-            .SetPieceInfos(_pieceInfos)
-            .SetConnectInfos(_connectInfos)
-            .Build();
     }
 
     /// <summary>

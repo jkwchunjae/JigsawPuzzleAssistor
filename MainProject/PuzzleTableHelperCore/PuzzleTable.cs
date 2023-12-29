@@ -10,6 +10,9 @@ public class PuzzleTable
 {
     public required List<List<PuzzleCell?>> Cells { get; set; }
 
+    [JsonIgnore] public int RowCount => Cells.Count;
+    [JsonIgnore] public int ColumnCount => Cells.Max(x => x?.Count ?? 0);
+
     public PuzzleCell? GetCell(int row, int column)
     {
         if (row < 0 || row >= Cells.Count)
