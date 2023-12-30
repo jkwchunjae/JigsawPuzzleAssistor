@@ -11,6 +11,8 @@ public partial class PuzzleTableComponent : ComponentBase
     PuzzleTable? _puzzleTable = null;
 
     List<(int Row, int Column)> _targets = new();
+    int targetLimit = 10;
+    List<SuggestionSet> _suggestionSets = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,28 +26,41 @@ public partial class PuzzleTableComponent : ComponentBase
         _puzzleTable = _service.PuzzleTable;
     }
 
-    private async Task AddTarget(int row, int column)
+    private void AddTarget(int row, int column)
     {
-        await Js.InvokeVoidAsync("console.log", row);
         if (!IsTarget(row, column))
         {
             _targets.Add((row, column));
         }
-        StateHasChanged();
     }
 
-    private Task RemoveTarget(int row, int column)
+    private void RemoveTarget(int row, int column)
     {
         if (IsTarget(row, column))
         {
             _targets.Remove((row, column));
         }
-        StateHasChanged();
-        return Task.CompletedTask;
     }
 
     private bool IsTarget(int row, int column)
     {
         return _targets.Contains((row, column));
+    }
+
+    private void GetSuggestionSets()
+    {
+        if (_targets?.Any() ?? false)
+        {
+            var sets = _service.FindTarget(targetLimit, _targets);
+            _suggestionSets = sets.ToList();
+        }
+    }
+
+    private async Task SelectSuggestionSet(SuggestionSet set)
+    {
+        await Js.InvokeVoidAsync("console.log", set);
+        _puzzleTable = await _service.SelectTableCell(set.Cells);
+        _targets = new();
+        StateHasChanged();
     }
 }

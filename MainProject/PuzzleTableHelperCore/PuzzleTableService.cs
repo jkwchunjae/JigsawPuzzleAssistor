@@ -121,7 +121,7 @@ public class PuzzleTableService
         }
     }
 
-    public Task SelectTableCell(List<PuzzleCell> selectedCells)
+    public async Task<PuzzleTable> SelectTableCell(List<PuzzleCell> selectedCells)
     {
         foreach (var cell in selectedCells)
         {
@@ -133,7 +133,9 @@ public class PuzzleTableService
             WriteIndented = true,
         });
 
-        return File.WriteAllTextAsync(_puzzleTableFilePath, tableText);
+        await File.WriteAllTextAsync(_puzzleTableFilePath, tableText);
+
+        return _puzzleTable;
     }
 
     private bool HasNearCell((int Row, int Column) target, SuggestionSet? suggestionSet)

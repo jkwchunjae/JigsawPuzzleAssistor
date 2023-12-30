@@ -28,3 +28,13 @@ td.cell div {
 td.cell div span {
     margin: auto;
 }
+
+td.cell button {
+    width: 30px;
+    height: 15px;
+}
+
+table.suggestion-table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}

@@ -40,7 +40,7 @@
                             }
                             else
                             {
-                                <MudButton Size="Size.Small" Variant="Variant.Filled" OnClick="(() => AddTarget(row, column))">+</MudButton>
+                                <button @onclick="@(e => AddTarget(row, column))">+</button>
                             }
                         </div>
                     </td>
@@ -58,5 +58,40 @@
             }
         </tr>
     }
+</table>
+
+<MudInput T="int" @bind-Value="targetLimit" />
+<MudButton OnClick="(() => GetSuggestionSets())">Calc</MudButton>
+
+<table class="suggestion-table">
+    <tr>
+        <td>Index</td>
+        @foreach (var target in _targets.OrderBy(t => t.Row).ThenBy(t => t.Column))
+        {
+            var targetText = $"{target.Row},{target.Column}";
+            <td>(@targetText)</td>
+        }
+        <td></td>
+    </tr>
+    @foreach (var (suggestionSet, index) in _suggestionSets.Select((s, i) => (s, i)))
+    {
+        <tr>
+            <td>@index</td>
+            @foreach (var target in _targets.OrderBy(t => t.Row).ThenBy(t => t.Column))
+            {
+                var cell = suggestionSet.Cells.FirstOrDefault(c => c.Row == target.Row && c.Column == target.Column);
+                <td>
+                    @if (cell is not null)
+                    {
+                    <span>@cell.PieceNumber</span>
+                    }
+                </td>
+            }
+            <td>
+                <MudButton OnClick="(() => SelectSuggestionSet(suggestionSet))">Select</MudButton>
+            </td>
+        </tr>
+    }
+    <tr></tr>
 </table>
 }
