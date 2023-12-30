@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using PuzzleTableHelperCore;
 
-namespace PuzzleTableHelperApp.Components.Pages;
+namespace PuzzleTableHelperApp.Pages.Components;
 public partial class PuzzleTableComponent : ComponentBase
 {
     [Inject] IJSRuntime Js { get; set; } = null!;
