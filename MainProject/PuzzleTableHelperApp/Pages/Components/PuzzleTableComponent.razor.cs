@@ -72,9 +72,9 @@ public partial class PuzzleTableComponent : ComponentBase
                     var noHints = _hint.Where(x => x.Flag == HintFlag.No);
 
                     var resultYes = yesHints.All(hint => set.Cells.Any(cell => cell.Row == hint.Row && cell.Column == hint.Column && cell.PieceNumber == hint.Number));
-                    var resultNo = noHints.All(hint => set.Cells.All(cell => cell.Row != hint.Row || cell.Column != hint.Column || cell.PieceNumber != hint.Number));
+                    var resultNo = noHints.Any(hint => set.Cells.Any(cell => cell.Row == hint.Row && cell.Column == hint.Column && cell.PieceNumber == hint.Number));
 
-                    return resultYes && resultNo;
+                    return resultYes && !resultNo;
                 }
                 else
                 {
@@ -89,7 +89,6 @@ public partial class PuzzleTableComponent : ComponentBase
         _puzzleTable = await _service.SelectTableCell(set.Cells);
         _targets = new();
         _suggestionSets = new();
-        _hint = new();
         StateHasChanged();
     }
 
