@@ -15,6 +15,9 @@ public partial class PuzzleTableComponent : ComponentBase
     List<SuggestionSet> _suggestionSets = new();
     List<(int Row, int Column, int Number, HintFlag Flag)> _hint = new();
 
+    int displayColumnStart = 0;
+    int displayRowStart = 0;
+
     protected override async Task OnInitializedAsync()
     {
         _service = new PuzzleTableService(new PuzzleTableServiceOption
