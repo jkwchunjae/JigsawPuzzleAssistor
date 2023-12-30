@@ -61,7 +61,11 @@ public class PuzzleTableService
             {
                 var connectInfo = _connectInfos.First(x => x.PieceName == nearCell.PieceName);
                 var edge = connectInfo.Edges[nearCell.GetEdgeIndex(target)];
-                return (NearCell: nearCell, Connections: edge.Connection.Take(limit));
+                var nearConnections = edge.Connection
+                    // 확정된 조각은 제외한다.
+                    .Where(cell => _puzzleTable.IsFixed(cell.PieceName) == false)
+                    .Take(limit);
+                return (NearCell: nearCell, Connections: nearConnections);
             })
             .SelectMany(x => x.Connections
                 .Select(c => (NearCell: x.NearCell, ConnectTarget: c))
@@ -103,14 +107,14 @@ public class PuzzleTableService
             var nextSuggestionSet = new SuggestionSet
             {
                 Cells = suggestionSet.Cells
-                    .Concat(new[] { new PuzzleCell
+                    .Append(new PuzzleCell
                     {
                         Row = target.Row,
                         Column = target.Column,
                         PieceName = connectTarget.PieceName,
                         PieceNumber = _pieceInfos.First(x => x.Name == connectTarget.PieceName).Number,
                         TopEdgeIndex = targetTopIndex,
-                    }})
+                    })
                     .ToList(),
             };
 

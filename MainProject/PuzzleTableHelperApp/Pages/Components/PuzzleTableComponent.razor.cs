@@ -13,6 +13,7 @@ public partial class PuzzleTableComponent : ComponentBase
     List<(int Row, int Column)> _targets = new();
     int targetLimit = 10;
     List<SuggestionSet> _suggestionSets = new();
+    List<(int Row, int Column, int Number, HintFlag Flag)> _hint = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,20 +48,66 @@ public partial class PuzzleTableComponent : ComponentBase
         return _targets.Contains((row, column));
     }
 
-    private void GetSuggestionSets()
+    private void GetSuggestionSets(int limit = 0)
     {
         if (_targets?.Any() ?? false)
         {
-            var sets = _service.FindTarget(targetLimit, _targets);
-            _suggestionSets = sets.ToList();
+            if (limit == 0)
+            {
+                limit = targetLimit;
+            }
+            var sets = _service.FindTarget(limit, _targets);
+            UpdateSuggestionSets(sets);
         }
+    }
+
+    private void UpdateSuggestionSets(IEnumerable<SuggestionSet> sets)
+    {
+        _suggestionSets = sets
+            .Where(set =>
+            {
+                if (_hint?.Any() ?? false)
+                {
+                    var yesHints = _hint.Where(x => x.Flag == HintFlag.Yes);
+                    var noHints = _hint.Where(x => x.Flag == HintFlag.No);
+
+                    var resultYes = yesHints.All(hint => set.Cells.Any(cell => cell.Row == hint.Row && cell.Column == hint.Column && cell.PieceNumber == hint.Number));
+                    var resultNo = noHints.All(hint => set.Cells.All(cell => cell.Row != hint.Row || cell.Column != hint.Column || cell.PieceNumber != hint.Number));
+
+                    return resultYes && resultNo;
+                }
+                else
+                {
+                    return true;
+                }
+            })
+            .ToList();
     }
 
     private async Task SelectSuggestionSet(SuggestionSet set)
     {
-        await Js.InvokeVoidAsync("console.log", set);
         _puzzleTable = await _service.SelectTableCell(set.Cells);
         _targets = new();
+        _suggestionSets = new();
+        _hint = new();
         StateHasChanged();
     }
+
+    private void HintYes(int row, int column, int number)
+    {
+        _hint.Add((row, column, number, HintFlag.Yes));
+        UpdateSuggestionSets(_suggestionSets);
+    }
+
+    private void HintNo(int row, int column, int number)
+    {
+        _hint.Add((row, column, number, HintFlag.No));
+        UpdateSuggestionSets(_suggestionSets);
+    }
+}
+
+public enum HintFlag
+{
+    Yes,
+    No,
 }
