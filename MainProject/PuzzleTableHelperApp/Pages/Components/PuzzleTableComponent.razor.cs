@@ -71,13 +71,14 @@ public partial class PuzzleTableComponent : ComponentBase
             {
                 if (_hint?.Any() ?? false)
                 {
-                    var yesHints = _hint.Where(x => x.Flag == HintFlag.Yes);
-                    var noHints = _hint.Where(x => x.Flag == HintFlag.No);
+                    var relatedHint = _hint.Where(x => set.Cells.Any(cell => cell.Row == x.Row && cell.Column == x.Column));
+                    var yesHints = relatedHint.Where(x => x.Flag == HintFlag.Yes);
+                    var noHints = relatedHint.Where(x => x.Flag == HintFlag.No);
 
                     var resultYes = yesHints.All(hint => set.Cells.Any(cell => cell.Row == hint.Row && cell.Column == hint.Column && cell.PieceNumber == hint.Number));
                     var resultNo = noHints.Any(hint => set.Cells.Any(cell => cell.Row == hint.Row && cell.Column == hint.Column && cell.PieceNumber == hint.Number));
 
-                    return resultYes && !resultNo;
+                    return resultYes && (noHints.Any() ? !resultNo : true);
                 }
                 else
                 {
