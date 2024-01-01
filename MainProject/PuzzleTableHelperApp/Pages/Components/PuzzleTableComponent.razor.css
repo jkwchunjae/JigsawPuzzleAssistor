@@ -30,11 +30,25 @@ td.cell div span {
 }
 
 td.cell button {
-    width: 30px;
-    height: 15px;
+    width: 100%;
+    height: 100%;
+}
+
+td.cell button.target-add {
+
+}
+
+td.cell button.target-remove {
+    background-color: seagreen;
+    color: white;
 }
 
 table.suggestion-table {
     border-collapse: collapse;
     border: 1px solid black;
+}
+
+table.suggestion-table td {
+    padding: 2px 5px;
+    border: 1px solid rgb(216, 216, 216);
 }

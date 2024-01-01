@@ -42,11 +42,11 @@
                         <div>
                             @if (IsTarget(row, column))
                             {
-                                <button @onclick="@(e => RemoveTarget(row, column))">-</button>
+                                <button class="cell-button target-remove" @onclick="@(e => RemoveTarget(row, column))">-</button>
                             }
                             else
                             {
-                                <button @onclick="@(e => AddTarget(row, column))">+</button>
+                                <button class="cell-button target-add" @onclick="@(e => AddTarget(row, column))">+</button>
                             }
                         </div>
                     </td>
@@ -67,15 +67,15 @@
 </table>
 
 <MudInput T="int" @bind-Value="targetLimit" />
-<MudButton OnClick="(() => GetSuggestionSets())">Calc</MudButton>
-<MudButton OnClick="(() => GetSuggestionSets(5))">Calc5</MudButton>
-<MudButton OnClick="(() => GetSuggestionSets(10))">Calc10</MudButton>
-<MudButton OnClick="(() => GetSuggestionSets(20))">Calc20</MudButton>
-<MudButton OnClick="(() => GetSuggestionSets(40))">Calc40</MudButton>
+<MudButton OnClick="(() => GetSuggestionSets())">계산</MudButton>
+<MudButton OnClick="(() => GetSuggestionSets(5))">계산5</MudButton>
+<MudButton OnClick="(() => GetSuggestionSets(10))">계산10</MudButton>
+<MudButton OnClick="(() => GetSuggestionSets(20))">계산20</MudButton>
+<MudButton OnClick="(() => GetSuggestionSets(40))">계산40</MudButton>
 
 <table class="suggestion-table">
     <tr>
-        <td>Index</td>
+        <td></td>
         @foreach (var target in _targets.OrderBy(t => t.Row).ThenBy(t => t.Column))
         {
             var targetText = $"{target.Row},{target.Column}";
@@ -102,7 +102,7 @@
                 </td>
             }
             <td>
-                <MudButton OnClick="(() => SelectSuggestionSet(suggestionSet))">Select</MudButton>
+                <MudButton OnClick="(() => SelectSuggestionSet(suggestionSet))">선택</MudButton>
             </td>
         </tr>
     }
