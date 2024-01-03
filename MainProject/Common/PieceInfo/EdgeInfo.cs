@@ -71,5 +71,12 @@ public class EdgeInfo
             return (float)Math.Sqrt(x * x + y * y);
         }
     }
+
+    public float DiffLength(EdgeInfo other)
+    {
+        var shortLength = Math.Min(Length, other.Length);
+        var longLength = Math.Max(Length, other.Length);
+        return (longLength - shortLength) / shortLength;
+    }
 }
 

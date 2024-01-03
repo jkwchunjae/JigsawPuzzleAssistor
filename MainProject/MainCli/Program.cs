@@ -8,6 +8,7 @@ var commands = new List<(string Command, IMainRunner Runner)>
     ("PieceInfo", new PieceInfoJson()),
     ("ConnecInfo", new ConnectInfoJson()),
     ("FindTargetTest", new FindTargetTest()),
+    ("Review", new ReviewPuzzleTable()),
 };
 
 Console.WriteLine(

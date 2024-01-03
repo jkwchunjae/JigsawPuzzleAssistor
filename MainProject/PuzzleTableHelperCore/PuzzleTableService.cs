@@ -2,7 +2,6 @@ using System.Data;
 using System.Text.Json;
 using Common.PieceInfo;
 using JkwExtensions;
-using SquareGraphLib;
 
 namespace PuzzleTableHelperCore;
 
@@ -19,11 +18,9 @@ public class PuzzleTableService
     private readonly string _connectInfoDirectory;
     private readonly string _puzzleTableFilePath;
 
-    private PieceInfo[] _pieceInfos = Array.Empty<PieceInfo>();
-    private ConnectInfo[] _connectInfos = Array.Empty<ConnectInfo>();
-    private PuzzleTable _puzzleTable = null;
-    private SquareGraph _squareGraph = null;
-    private List<SquareNode> _nodes => _squareGraph.Nodes;
+    protected PieceInfo[] _pieceInfos = Array.Empty<PieceInfo>();
+    protected ConnectInfo[] _connectInfos = Array.Empty<ConnectInfo>();
+    protected PuzzleTable _puzzleTable = null;
 
     public PuzzleTable PuzzleTable => _puzzleTable;
 
