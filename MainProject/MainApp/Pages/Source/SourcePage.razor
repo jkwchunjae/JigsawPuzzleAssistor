@@ -2,7 +2,30 @@
 
 <PageTitle>퍼즐::원본 이미지</PageTitle>
 
+@if (HasSourceImage)
+{
+    <MudText Typo="Typo.h4">원본 이미지</MudText>
+    <MudText Typo="Typo.body1">이미지를 확인했습니다.</MudText>
+    <MudText Typo="Typo.body1">퍼즐이미지를 잘라냅니다.</MudText>
 
+    <MudButton Variant="Variant.Outlined" OnClick="@(() => StartCutting())">
+        자르기
+    </MudButton>
+
+    <MudProgressLinear Size="Size.Large" Value="CropProgress" />
+}
+else
+{
+    <MudAlert Severity="Severity.Error">
+        원본 이미지가 없습니다.
+    </MudAlert>
+    <MudButton Variant="Variant.Outlined" OnClick="@(() => OpenSourceFolder())">
+        원본 이미지 추가
+    </MudButton>
+    <MudButton Variant="Variant.Outlined" OnClick="@(() => Check())">
+        다시 확인하기
+    </MudButton>
+}
 
 <MudGrid>
     <MudItem xs="12">
