@@ -1,0 +1,33 @@
+﻿@page "/start"
+
+<PageTitle>퍼즐::시작하기</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h3">시작하기</MudText>
+        <MudText Typo="Typo.h4">
+            작업 폴더를 선택하십시오.
+        </MudText>
+    </MudItem>
+    @if (Workspaces?.Any() ?? false)
+    {
+        <MudItem>
+            <MudList>
+                @foreach (var data in Workspaces)
+                {
+                    <MudListItem>
+                        @data.Name
+                        <MudButton OnClick="@(() => SelectWorkspace(data))">
+                            선택
+                        </MudButton>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudItem>
+    }
+    <MudItem>
+        <MudTextField T="string" @bind-Value="WorkspaceName" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField T="string" @bind-Value="WorkspacePath" Variant="Variant.Outlined"></MudTextField>
+        <MudButton OnClick="@(async () => await AddNewWorkspace(WorkspaceName, WorkspacePath))">추가</MudButton>
+    </MudItem>
+</MudGrid>
