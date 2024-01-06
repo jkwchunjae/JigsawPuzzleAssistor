@@ -12,6 +12,7 @@ builder.Services.AddMudServices();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddSingleton<WorkspaceService>();
+builder.Services.AddSingleton<WorkspaceManagerService>();
 
 var app = builder.Build();
 

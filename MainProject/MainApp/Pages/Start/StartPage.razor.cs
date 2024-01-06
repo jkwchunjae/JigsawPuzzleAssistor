@@ -5,7 +5,7 @@ namespace MainApp.Pages.Start;
 
 public partial class StartPage : ComponentBase
 {
-    [Inject] public WorkspaceService WorkspaceService { get; set; } = null!;
+    [Inject] public WorkspaceManagerService WorkspaceService { get; set; } = null!;
 
     private List<WorkspaceData>? Workspaces;
 
@@ -33,7 +33,7 @@ public partial class StartPage : ComponentBase
         }
     }
 
-    private void SelectWorkspace(WorkspaceData workspace)
+    private void SelectWorkspace(WorkspaceData? workspace)
     {
         WorkspaceService.SelectWorkspace(workspace);
     }

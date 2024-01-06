@@ -1,85 +1,39 @@
-﻿using System.Text.Json;
-using JkwExtensions;
+﻿using JkwExtensions;
 
 namespace MainApp.Service;
 
-public class WorkspaceData
-{
-    public required string Name { get; set; }
-    public required string RootPath { get; set; }
-    public string? InputRegex { get; set; }
-}
-
 public class WorkspaceService
 {
-    private ILogger logger;
-    private WorkspaceData? currentWorkspace;
-    public WorkspaceService(ILogger<WorkspaceService> logger)
+    WorkspaceData? workspace;
+    public void SetCurrentWorkspace(WorkspaceData workspace)
     {
-        this.logger = logger;
+        this.workspace = workspace;
     }
-    public async Task<IEnumerable<WorkspaceData>> GetWorkspaces()
+    public bool HasSourceImage()
     {
-        try
-        {
-            var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var assistorConfigDir = Path.Join(localAppDataPath, "jigsaw-puzzle-assistor");
+        if (workspace == null)
+            return false;
 
-            if (!Directory.Exists(assistorConfigDir))
-            {
-                return Enumerable.Empty<WorkspaceData>();
-            }
+        if (!Directory.Exists(workspace.SourceDir))
+            return false;
 
-            var list = await Directory.GetFiles(assistorConfigDir)
-                .Where(path => Path.GetFileName(path).StartsWith("workspace"))
-                .Select(async path => await LoadWorkspaceData(path))
-                .WhenAll();
+        var sources = Directory.GetFiles(workspace.SourceDir);
+        if (sources.Length == 0)
+            return false;
 
-            return list
-                .Where(data => data != null)
-                .Select(data => data!)
-                .ToList();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Errorn on GetWorkspaces()");
-            return Enumerable.Empty<WorkspaceData>();
-        }
-
-        async Task<WorkspaceData?> LoadWorkspaceData(string workspacePath)
-        {
-            var text = await File.ReadAllTextAsync(workspacePath);
-            return JsonSerializer.Deserialize<WorkspaceData>(text);
-        }
+        return true;
     }
-    public async Task<WorkspaceData?> AddNewWorkspace(string name, string workspacePath)
+    public async Task<List<(string Name, byte[] Image)>> GetSources()
     {
-        try
-        {
-            var workspaceData = new WorkspaceData
+        var files = await Directory.GetFiles(workspace!.SourceDir)
+            .Select(async path =>
             {
-                Name = name,
-                RootPath = workspacePath,
-            };
-            var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var assistorConfigDir = Path.Join(localAppDataPath, "jigsaw-puzzle-assistor");
-            if (!Directory.Exists(assistorConfigDir))
-            {
-                Directory.CreateDirectory(assistorConfigDir);
-            }
-            var dataPath = Path.Join(assistorConfigDir, $"workspace-{name}.json");
-            var json = JsonSerializer.Serialize(workspaceData, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(dataPath, json);
-            return workspaceData;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Errorn on AddNewWorkspace()");
-            return null;
-        }
-    }
-    public void SelectWorkspace(WorkspaceData workspaceData)
-    {
-        currentWorkspace = workspaceData;
+                var name = Path.GetFileNameWithoutExtension(path);
+                var bytes = await File.ReadAllBytesAsync(path);
+                return (name, bytes);
+            })
+            .WhenAll();
+
+        return files.ToList();
     }
 }
