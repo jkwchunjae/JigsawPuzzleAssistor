@@ -24,4 +24,19 @@ public class WorkspaceService
 
         return true;
     }
+    public bool HasCroppedImage()
+    {
+        if (workspace == null)
+            return false;
+
+        if (!Directory.Exists(workspace.ResizeDir))
+            return false;
+
+        var sources = Directory.EnumerateFiles(workspace.ResizeDir);
+        if (sources.Empty())
+            return false;
+
+        return true;
+
+    }
 }

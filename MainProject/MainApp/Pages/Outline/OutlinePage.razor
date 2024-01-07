@@ -2,8 +2,13 @@
 
 <PageTitle>퍼즐::외곽선</PageTitle>
 
-<MudGrid>
-    <MudItem xs="12">
-        외곽선
-    </MudItem>
-</MudGrid>
+<MudText Typo="Typo.h4">외곽선 추출</MudText>
+<MudText Typo="Typo.body1">이미지를 확인했습니다.</MudText>
+<MudText Typo="Typo.body1">퍼즐 이미지에서 외곽선을 추출합니다.</MudText>
+
+<MudButton Variant="Variant.Outlined" OnClick="@(() => StartOutline(3))">
+    외곽선 추출
+</MudButton>
+
+<MudProgressLinear Size="Size.Large" Value="OutlineProgress" />
+

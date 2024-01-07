@@ -15,9 +15,11 @@ internal class Outline
 {
     public string Name { get; init; }
 
-    private Point[] Contour { get; set; }
-    private Image<Bgr, byte> _raw { get; init; }
-    private Image<Bgr, byte> _outlineImage { get; set; }
+    private VectorOfVectorOfPoint ContourVector;
+    private int ContourIndex = -1;
+    private Point[] Contour;
+    private Image<Bgr, byte> _raw;
+    private Image<Bgr, byte> _outlineImage;
 
     public Outline(string imagePath)
     {
@@ -77,18 +79,27 @@ internal class Outline
                 }
             }
             Contour = contour.ToArray();
+            ContourVector = contours;
+            ContourIndex = puzzleContoursIndex;
             _outlineImage = outline;
         });
     }
 
-    public Image<Bgr, byte> GetImage()
+    public Image<Bgr, byte> GetImage(int thickness = 1)
     {
-        if (_outlineImage == null)
+        if (_outlineImage == -1)
         {
             throw new Exception("run process");
         }
+        var outlineImage = new Image<Bgr, byte>(_raw.Width, _raw.Height, new Bgr(0, 0, 0));
+        CvInvoke.DrawContours(outlineImage, ContourVector, ContourIndex, new MCvScalar(0, 255, 0), thickness);
+        return outlineImage;
+        //if (_outlineImage == null)
+        //{
+        //    throw new Exception("run process");
+        //}
 
-        return _outlineImage;
+        //return _outlineImage;
     }
 
     public Point[] GetContour()

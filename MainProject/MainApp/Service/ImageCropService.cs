@@ -18,7 +18,7 @@ public class ImageCropService
     {
         this.workspace = workspace;
     }
-    public async Task StartCrop(Rectangle initRoi, bool openDirectory = false)
+    public async Task StartCrop(Rectangle initRoi, bool openFolder = false)
     {
         if (!Directory.Exists(workspace.ResizeDir))
         {
@@ -42,7 +42,7 @@ public class ImageCropService
             });
         });
 
-        if (openDirectory)
+        if (openFolder)
         {
             Process.Start("explorer.exe", workspace.ResizeDir);
         }

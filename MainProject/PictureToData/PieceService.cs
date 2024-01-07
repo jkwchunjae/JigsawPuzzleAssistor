@@ -56,8 +56,31 @@ public class PieceService
 
         if (!Directory.Exists(Path.GetDirectoryName(outputPath)))
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
         }
+        CvInvoke.Imwrite(outputPath, outlineImage);
+    }
+
+    public async Task MakeOutlineImageAsync(string imagePath, string outputPath, int thickness = 1)
+    {
+        if (!File.Exists(imagePath))
+        {
+            throw new FileNotFoundException($"File not found: {imagePath}");
+        }
+        if (!CvInvoke.Init())
+        {
+            throw new Exception("Unable to initialize CvInvoke");
+        }
+
+        var outline = new Outline(imagePath);
+        await outline.ProcessAsync();
+        var outlineImage = outline.GetImage(thickness);
+
+        if (!Directory.Exists(Path.GetDirectoryName(outputPath)))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+        }
+
         CvInvoke.Imwrite(outputPath, outlineImage);
     }
 }
