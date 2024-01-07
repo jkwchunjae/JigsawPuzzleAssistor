@@ -1,0 +1,31 @@
+﻿@page "/info"
+@using MainApp.Service
+
+<PageTitle>퍼즐::조각 데이터</PageTitle>
+
+<MudText Typo="Typo.h4">퍼즐 조각 데이터 생성</MudText>
+<MudText Typo="Typo.body1">이미지를 확인했습니다.</MudText>
+<MudText Typo="Typo.body1">퍼즐 이미지를 데이터로 변경합니다.</MudText>
+
+<MudButton Variant="Variant.Outlined" OnClick="@(() => Start())">
+    데이터 생성
+</MudButton>
+
+<MudProgressLinear Size="Size.Large" Value="InfoProgress" />
+
+@if (InfoResults?.Any() ?? false)
+{
+<MudTable T="InfoResult" Items="InfoResults">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<InfoResult, object>(x => x.FileName)">
+            파일명
+        </MudTableSortLabel>
+        </MudTh>
+        <MudTh>에러메세지</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.FileName</MudTd>
+        <MudTd>@context.Error</MudTd>
+    </RowTemplate>
+</MudTable>
+}
