@@ -1,0 +1,109 @@
+﻿@using PuzzleTableHelperCore;
+
+
+@if (_puzzleTable != null)
+{
+    <div>
+        <MudButton OnClick="(() => displayRowStart++)">Row ↑</MudButton>
+        <MudButton OnClick="(() => displayRowStart = Math.Max(0, displayRowStart - 1))">Row ↓</MudButton>
+        <MudButton OnClick="(() => displayColumnStart++)">Column ←</MudButton>
+        <MudButton OnClick="(() => displayColumnStart = Math.Max(0, displayColumnStart - 1))">Column →</MudButton>
+    </div>
+    <table class="puzzle-table">
+        <tr>
+            <td></td>
+            @for (int column = displayColumnStart; column < _puzzleTable.ColumnCount + 1; column++)
+            {
+                <td class="header">
+                    <div>
+                        <span>@column</span>
+                    </div>
+                </td>
+            }
+        </tr>
+        @for (int rowIndex = displayRowStart; rowIndex < _puzzleTable.RowCount + 1; rowIndex++)
+        {
+            var row = rowIndex;
+            <tr>
+                <td class="header">
+                    <div>
+                        <span>@row</span>
+                    </div>
+                </td>
+                @for (int columnIndex = displayColumnStart; columnIndex < _puzzleTable.ColumnCount + 1; columnIndex++)
+                {
+                    var column = columnIndex;
+                    PuzzleCell? cell = _puzzleTable.GetCell(row, column);
+                    if (cell is null)
+                    {
+                        <td class="cell">
+                            <div>
+                                @if (IsTarget(row, column))
+                                {
+                                    <button class="cell-button target-remove" @onclick="@(e => RemoveTarget(row, column))">-</button>
+                                }
+                                else
+                                {
+                                    <button class="cell-button target-add" @onclick="@(e => AddTarget(row, column))">+</button>
+                                }
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="cell">
+                            <div>
+                                <span>
+                                    @cell!.PieceNumber
+                                </span>
+                            </div>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </table>
+
+    <MudInput T="int" @bind-Value="targetLimit" />
+    <MudButton OnClick="(() => GetSuggestionSets())">계산</MudButton>
+    <MudButton OnClick="(() => GetSuggestionSets(5))">계산5</MudButton>
+    <MudButton OnClick="(() => GetSuggestionSets(10))">계산10</MudButton>
+    <MudButton OnClick="(() => GetSuggestionSets(20))">계산20</MudButton>
+    <MudButton OnClick="(() => GetSuggestionSets(40))">계산40</MudButton>
+
+    <table class="suggestion-table">
+        <tr>
+            <td></td>
+            @foreach (var target in _targets.OrderBy(t => t.Row).ThenBy(t => t.Column))
+            {
+                var targetText = $"{target.Row},{target.Column}";
+                <td>(@targetText)</td>
+            }
+            <td></td>
+        </tr>
+        @foreach (var (suggestionSet, index) in _suggestionSets.Select((s, i) => (s, i)))
+        {
+            <tr>
+                <td>@index</td>
+                @foreach (var target in _targets.OrderBy(t => t.Row).ThenBy(t => t.Column))
+                {
+                    var cell = suggestionSet.Cells.FirstOrDefault(c => c.Row == target.Row && c.Column == target.Column);
+                    <td>
+                        @if (cell is not null)
+                        {
+                            <div>
+                                <span>@cell.PieceNumber</span>
+                                <MudIconButton Icon="@Icons.Material.Filled.BookmarkAdd" OnClick="(() => HintYes(target.Row, target.Column, cell.PieceNumber))" Size="Size.Small" />
+                                <MudIconButton Icon="@Icons.Material.Filled.RemoveCircleOutline" OnClick="(() => HintNo(target.Row, target.Column, cell.PieceNumber))" Size="Size.Small" />
+                            </div>
+                        }
+                    </td>
+                }
+                <td>
+                    <MudButton OnClick="(() => SelectSuggestionSet(suggestionSet))">선택</MudButton>
+                </td>
+            </tr>
+        }
+        <tr></tr>
+    </table>
+}

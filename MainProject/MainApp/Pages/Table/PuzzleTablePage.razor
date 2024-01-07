@@ -1,0 +1,24 @@
+﻿@page "/table"
+
+<PageTitle>퍼즐::맞추기</PageTitle>
+
+<MudText Typo="Typo.h4">퍼즐 맞추기</MudText>
+<MudText Typo="Typo.body1">확인했습니다.</MudText>
+<MudText Typo="Typo.body1">퍼즐 데이터에서 퍼즐 간 연결 정보를 생성합니다.</MudText>
+
+<MudSelect T="string"
+    ToStringFunc="new Func<string, string>(path => Path.GetFileNameWithoutExtension(path))"
+    Value="selectedTablePath"
+    ValueChanged="@((f) => TableChanged(f))"
+>
+    @foreach (var file in tables)
+    {
+        <MudSelectItem Value="@file" />
+    }
+</MudSelect>
+
+
+@if (puzzleTableServiceOption != null)
+{
+    <PuzzleTableComponent Option="puzzleTableServiceOption" />
+}
