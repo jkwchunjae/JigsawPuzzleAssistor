@@ -13,19 +13,25 @@ public partial class CornerPage : ComponentBase
 
     int CornerProgress = 0;
 
-    protected override void OnInitialized()
+    CornerErrorResult[] CornerErrors = Array.Empty<CornerErrorResult>();
+
+    protected override async Task OnInitializedAsync()
     {
         if (workspace == null)
         {
             NavigationManager.NavigateTo("/start");
+            return;
         }
-        if (!WorkspaceService.HasCroppedImage())
+        else if (!WorkspaceService.HasCroppedImage())
         {
             NavigationManager.NavigateTo("/outline");
+            return;
         }
+
+        CornerErrors = await WorkspaceService.GetCornerErrorsAsync();
     }
 
-    Task StartCorner(int thickness)
+    async Task StartCorner(int thickness)
     {
         CornerProgress = 0;
 
@@ -47,7 +53,12 @@ public partial class CornerPage : ComponentBase
             BlockSize = 9,
         };
 
-        _ = cornerService.StartCorner(cornerDetectArgument, thickness);
-        return Task.CompletedTask;
+        var errors = await cornerService.StartCorner(cornerDetectArgument, thickness);
+
+        CornerErrors = errors
+            .OrderBy(x => x.FileName)
+            .ToArray();
+
+        await WorkspaceService.SaveCornerErrorsAsync(CornerErrors);
     }
 }

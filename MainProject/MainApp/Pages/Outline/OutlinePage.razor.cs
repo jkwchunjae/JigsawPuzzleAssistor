@@ -18,7 +18,7 @@ public partial class OutlinePage : ComponentBase
         {
             NavigationManager.NavigateTo("/start");
         }
-        if (!WorkspaceService.HasCroppedImage())
+        else if (!WorkspaceService.HasCroppedImage())
         {
             NavigationManager.NavigateTo("/outline");
         }

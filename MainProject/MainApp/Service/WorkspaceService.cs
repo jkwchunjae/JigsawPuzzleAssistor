@@ -1,4 +1,6 @@
 ﻿using JkwExtensions;
+using System.Text;
+using System.Text.Json;
 
 namespace MainApp.Service;
 
@@ -37,6 +39,35 @@ public class WorkspaceService
             return false;
 
         return true;
+    }
+    public async Task SaveCornerErrorsAsync(CornerErrorResult[] errors)
+    {
+        if (workspace == null)
+            return;
 
+        if (!Directory.Exists(Directory.GetParent(workspace.CornerErrorsPath)!.FullName))
+        {
+            Directory.CreateDirectory(Directory.GetParent(workspace.CornerErrorsPath)!.FullName);
+        }
+
+        var json = JsonSerializer.Serialize(errors, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+        });
+        await File.WriteAllTextAsync(workspace.CornerErrorsPath, json, Encoding.UTF8);
+    }
+    public async Task<CornerErrorResult[]> GetCornerErrorsAsync()
+    {
+        if (workspace == null)
+            return Array.Empty<CornerErrorResult>();
+
+        if (!File.Exists(workspace.CornerErrorsPath))
+            return Array.Empty<CornerErrorResult>();
+
+        var json = await File.ReadAllTextAsync(workspace.CornerErrorsPath);
+        var errors = JsonSerializer.Deserialize<CornerErrorResult[]>(json);
+        return (errors ?? Array.Empty<CornerErrorResult>())
+            .OrderBy(x => x.FileName)
+            .ToArray();
     }
 }

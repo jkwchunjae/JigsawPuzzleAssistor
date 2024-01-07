@@ -13,4 +13,6 @@ public class WorkspaceData
     public string InfoDir => Path.Join(RootPath, "4_info");
     public string ConnectionDir => Path.Join(RootPath, "5_connection");
     public string ResultDir => Path.Join(RootPath, "6_result");
+    public string TempDir => Path.Join(RootPath, "9_temp");
+    public string CornerErrorsPath => Path.Join(TempDir, "corner_errors.json");
 }
