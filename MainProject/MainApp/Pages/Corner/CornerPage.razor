@@ -1,5 +1,6 @@
 ﻿@page "/corner"
 @using MainApp.Service
+@using MainApp.Component
 
 <PageTitle>퍼즐::코너</PageTitle>
 
@@ -15,19 +16,18 @@
 
 @if (CornerErrors?.Any() ?? false)
 {
-<MudTable T="CornerErrorResult" Items="CornerErrors" Dense="true">
-    <HeaderContent>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CornerErrorResult, object>(x => x.FileName)">
-                파일명
-            </MudTableSortLabel>
-        </MudTh>
-        <MudTh>에러메세지</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd>@context.FileName</MudTd>
-        <MudTd>@context.Error</MudTd>
-    </RowTemplate>
-</MudTable>
+<MudSelect T="CornerErrorResult" Value="SelectedError" ValueChanged="@((v) => ErrorSelectChanged(v))">
+    @foreach (var error in CornerErrors)
+    {
+        <MudSelectItem Value="@error">
+            @error.FileName
+        </MudSelectItem>
+    }
+</MudSelect>
+
+    @if (!string.IsNullOrEmpty(cornerSelectionImage))
+    {
+        <ImageLocal Path="@cornerSelectionImage" OnClick="@((p) => Click(p))" />
+    }
 }
 

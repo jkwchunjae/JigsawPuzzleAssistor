@@ -15,4 +15,8 @@ public class WorkspaceData
     public string ResultDir => Path.Join(RootPath, "6_result");
     public string TempDir => Path.Join(RootPath, "9_temp");
     public string CornerErrorsPath => Path.Join(TempDir, "corner_errors.json");
+    public string CornerSelectionImagePath(string fileName)
+    {
+        return Path.Join(TempDir, "corner_selection", fileName);
+    }
 }

@@ -2,6 +2,7 @@
 using PictureToData;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Drawing;
 using System.Text.Json;
 
 namespace MainApp.Service;
@@ -93,4 +94,24 @@ public class PieceInfoService
         return results.ToArray();
     }
 
+    public async Task CreatePieceInfoWithPredefinedCorner(string input, PointF[] corners)
+    {
+        ISinglePieceImageProcessor processor = new SinglePieceImageProcessor();
+        var pieceInfo = await processor.MakePieceInfoWithPredefinedCornerAsync(input, corners);
+
+        var serializeOption = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters =
+            {
+                new PointFJsonConverter(),
+                new PointArrayJsonConverter(),
+                new PointFArrayJsonConverter(),
+            },
+        };
+        var fileName = Path.GetFileNameWithoutExtension(input);
+        var targetPath = Path.Join(workspace.InfoDir, $"{fileName}.json");
+
+        await File.WriteAllTextAsync(targetPath, JsonSerializer.Serialize(pieceInfo, serializeOption));
+    }
 }
