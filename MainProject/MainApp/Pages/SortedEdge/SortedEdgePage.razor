@@ -1,0 +1,14 @@
+﻿@page "/edges"
+
+<MudTable T="EdgeInfo" Items="SortedEdges">
+    <HeaderContent>
+        <MudTh>Piece1</MudTh>
+        <MudTh>Piece2</MudTh>
+        <MudTh>Value</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Piece1</MudTd>
+        <MudTd>@context.Piece2</MudTd>
+        <MudTd>@context.Value</MudTd>
+    </RowTemplate>
+</MudTable>
