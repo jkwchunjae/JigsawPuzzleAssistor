@@ -25,7 +25,7 @@ public class ImageCornerService
         this.workspace = workspace;
     }
 
-    public async Task<CornerErrorResult[]> StartCorner(CornerDetectArgument cornerArgs, int thickness = 1, bool openFolder = false)
+    public async Task<(CornerErrorResult[] Errors, string[] Files)> StartCorner(CornerDetectArgument cornerArgs, int thickness = 1, bool openFolder = false)
     {
         if (!Directory.Exists(workspace.CornerDir))
         {
@@ -68,9 +68,12 @@ public class ImageCornerService
             Process.Start("explorer.exe", workspace.CornerDir);
         }
 
-        return errors
+        var errors2 = errors
             .OrderBy(x => x.FileName)
             .ToArray();
+        var cornerFiles = Directory.GetFiles(workspace.CornerDir);
+
+        return (errors2, files);
     }
 
     public async Task<(string FileName, PointF[] Corners)> MakeCornerSelectionFile(string input, List<PointF> selected)

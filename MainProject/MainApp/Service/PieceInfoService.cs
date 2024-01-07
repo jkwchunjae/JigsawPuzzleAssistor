@@ -22,7 +22,7 @@ public class PieceInfoService
         this.workspace = workspace;
     }
 
-    public async Task<InfoResult[]> Start(bool openFolder = false)
+    public async Task<InfoResult[]> Start(CornerDetectArgument argument, bool openFolder = false)
     {
         if (!Directory.Exists(workspace.InfoDir))
         {
@@ -42,7 +42,7 @@ public class PieceInfoService
         {
             try
             {
-                var info = await processor.MakePieceInfoAsync(file);
+                var info = await processor.MakePieceInfoAsync(file, argument);
                 fileInfoDictionary[file] = info;
             }
             catch (Exception ex)

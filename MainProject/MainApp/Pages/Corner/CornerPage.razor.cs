@@ -23,6 +23,14 @@ public partial class CornerPage : ComponentBase
     string cornerSelectionImage = string.Empty;
     PointF[] corners = Array.Empty<PointF>();
     List<PointF> selected = new List<PointF>();
+
+    string[] normalImages = Array.Empty<string>();
+    string selectedImage = string.Empty;
+
+    string currentCornerImage = string.Empty;
+
+    string selectType = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         if (workspace == null)
@@ -57,15 +65,17 @@ public partial class CornerPage : ComponentBase
         {
             MaxCorners = 4,
             QualityLevel = 0.01,
-            MinDistance = 200,
+            MinDistance = 100,
             BlockSize = 9,
         };
 
-        var errors = await cornerService.StartCorner(cornerDetectArgument, thickness);
+        var (errors, files) = await cornerService.StartCorner(cornerDetectArgument, thickness);
 
         CornerErrors = errors
             .OrderBy(x => x.FileName)
             .ToArray();
+
+        normalImages = files;
 
         await WorkspaceService.SaveCornerErrorsAsync(CornerErrors);
     }
@@ -83,6 +93,8 @@ public partial class CornerPage : ComponentBase
             var (cornerSelectionFileName, corners) = await cornerService.MakeCornerSelectionFile(error!.FullPath, selected);
             this.corners = corners;
             cornerSelectionImage = cornerSelectionFileName;
+
+            this.selectType = "error";
         }
     }
 
@@ -109,23 +121,78 @@ public partial class CornerPage : ComponentBase
                 selected.Add(selectCorner);
             }
 
-            var (fileName, _) = await cornerService.MakeCornerSelectionFile(SelectedError!.FullPath, selected);
+            if (selectType == "error")
+            {
+                var (fileName, _) = await cornerService.MakeCornerSelectionFile(SelectedError!.FullPath, selected);
+            }
+            else if (selectType == "normal")
+            {
+                var (fileName, _) = await cornerService.MakeCornerSelectionFile(selectedImage, selected);
+            }
         }
 
         if (selected.Count == 4)
         {
-            var pieceInfoService = new PieceInfoService(workspace!);
-            await pieceInfoService.CreatePieceInfoWithPredefinedCorner(SelectedError!.FullPath, selected.ToArray());
-
-            var index = CornerErrors.Select((x, i) => (Item: x, Index: i))
-                .First(x => x.Item == SelectedError).Index;
-            var nextIndex = index + 1;
-            if (nextIndex < CornerErrors.Length)
+            if (selectType == "error")
             {
-                await ErrorSelectChanged(CornerErrors[nextIndex]);
+                var pieceInfoService = new PieceInfoService(workspace!);
+                await pieceInfoService.CreatePieceInfoWithPredefinedCorner(SelectedError!.FullPath, selected.ToArray());
+
+                var index = CornerErrors.Select((x, i) => (Item: x, Index: i))
+                    .First(x => x.Item == SelectedError).Index;
+                var nextIndex = index + 1;
+                if (nextIndex < CornerErrors.Length)
+                {
+                    await ErrorSelectChanged(CornerErrors[nextIndex]);
+                }
+            }
+            else if (selectType == "normal")
+            {
+                var pieceInfoService = new PieceInfoService(workspace!);
+                await pieceInfoService.CreatePieceInfoWithPredefinedCorner(selectedImage, selected.ToArray());
+
+                var index = normalImages.Select((x, i) => (Item: x, Index: i))
+                    .First(x => x.Item == selectedImage).Index;
+                var nextIndex = index + 1;
+                if (nextIndex < normalImages.Length)
+                {
+                    await ImageSelectChanged(normalImages[nextIndex]);
+                }
+
             }
         }
     }
+
+    async Task ImageSelectChanged(string? normalImage)
+    {
+        await Js.InvokeVoidAsync("console.log", normalImage);
+        selectedImage = normalImage;
+        selected.Clear();
+        corners = Array.Empty<PointF>();
+        cornerSelectionImage = string.Empty;
+        if (normalImage != null)
+        {
+            var cornerService = new ImageCornerService(workspace!);
+            var (cornerSelectionFileName, corners) = await cornerService.MakeCornerSelectionFile(normalImage, selected);
+            this.corners = corners;
+            cornerSelectionImage = cornerSelectionFileName;
+            currentCornerImage = Path.Join(workspace!.CornerDir, Path.GetFileName(normalImage));
+
+            this.selectType = "normal";
+        }
+    }
+
+    async Task Next()
+    {
+        var index = normalImages.Select((x, i) => (Item: x, Index: i))
+            .First(x => x.Item == selectedImage).Index;
+        var nextIndex = index + 1;
+        if (nextIndex < normalImages.Length)
+        {
+            await ImageSelectChanged(normalImages[nextIndex]);
+        }
+    }
+
     static double Distance(System.Drawing.PointF p1, System.Drawing.PointF p2)
     {
         double dx = p2.X - p1.X;

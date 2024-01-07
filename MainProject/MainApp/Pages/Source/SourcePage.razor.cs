@@ -56,7 +56,7 @@ public partial class SourcePage : ComponentBase
             });
         };
 
-        var initRoi = new Rectangle(200, 400, 700, 700);
+        var initRoi = new Rectangle(200, 400, 700, 900);
         _ = cropService.StartCrop(initRoi);
 
         return Task.CompletedTask;

@@ -34,7 +34,7 @@ public class ConnectionInfoService
 
         var pieceInfos = (await Directory.GetFiles(workspace.InfoDir)
             .OrderBy(x => x)
-            .Take(100)
+            //.Take(100)
             .Select(x => ReadFromFile(x))
             .WhenAll())
             .ToArray();

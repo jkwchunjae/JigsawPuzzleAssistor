@@ -43,11 +43,11 @@ public partial class PieceInfoPage : ComponentBase
         {
             MaxCorners = 4,
             QualityLevel = 0.01,
-            MinDistance = 200,
+            MinDistance = 100,
             BlockSize = 9,
         };
 
-        var errors = await pieceInfoService.Start();
+        var errors = await pieceInfoService.Start(cornerDetectArgument);
         InfoResults = errors
             .OrderBy(x => x.FileName)
             .ToList();

@@ -16,18 +16,33 @@
 
 @if (CornerErrors?.Any() ?? false)
 {
-<MudSelect T="CornerErrorResult" Value="SelectedError" ValueChanged="@((v) => ErrorSelectChanged(v))">
-    @foreach (var error in CornerErrors)
-    {
-        <MudSelectItem Value="@error">
-            @error.FileName
-        </MudSelectItem>
-    }
-</MudSelect>
+    <MudSelect T="CornerErrorResult" Value="SelectedError" ValueChanged="@((v) => ErrorSelectChanged(v))">
+        @foreach (var error in CornerErrors)
+        {
+            <MudSelectItem Value="@error">
+                @error.FileName
+            </MudSelectItem>
+        }
+    </MudSelect>
+}
+@if (normalImages?.Any() ?? false)
+{
+    <MudSelect T="string" Value="selectedImage" ValueChanged="@((v) => ImageSelectChanged(v))">
+        @foreach (var image in normalImages)
+        {
+            <MudSelectItem Value="@image">
+                @Path.GetFileName(image)
+            </MudSelectItem>
+        }
+    </MudSelect>
 
-    @if (!string.IsNullOrEmpty(cornerSelectionImage))
-    {
-        <ImageLocal Path="@cornerSelectionImage" OnClick="@((p) => Click(p))" />
-    }
 }
 
+@if (!string.IsNullOrEmpty(cornerSelectionImage))
+{
+    <MudButton Variant="Variant.Outlined" OnClick="@(() => Next())" Class="d-block">다음</MudButton>
+    <ImageLocal Path="@currentCornerImage" />
+    <ImageLocal Path="@cornerSelectionImage" OnClick="@((p) => Click(p))" />
+}
+
+<div style="height: 1000px;"></div>

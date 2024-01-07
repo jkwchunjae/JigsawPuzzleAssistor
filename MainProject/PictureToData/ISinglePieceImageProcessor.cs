@@ -6,14 +6,14 @@ namespace PictureToData;
 
 public interface ISinglePieceImageProcessor
 {
-    Task<PieceInfo> MakePieceInfoAsync(string imagePath);
+    Task<PieceInfo> MakePieceInfoAsync(string imagePath, CornerDetectArgument argument);
     Task<PieceInfo> MakePieceInfoWithPredefinedCornerAsync(string imagePath, PointF[] predefinedCorner);
     Task DebugAsync(string imagePath, string outputPath);
 }
 
 public class SinglePieceImageProcessor : ISinglePieceImageProcessor
 {
-    public async Task<PieceInfo> MakePieceInfoAsync(string imagePath)
+    public async Task<PieceInfo> MakePieceInfoAsync(string imagePath, CornerDetectArgument argument)
     {
         if (!File.Exists(imagePath))
         {
@@ -27,7 +27,7 @@ public class SinglePieceImageProcessor : ISinglePieceImageProcessor
         var outline = new Outline(imagePath);
         await outline.ProcessAsync();
 
-        var cornerDetector = new CornerDetector(outline);
+        var cornerDetector = new CornerDetector(outline, argument);
         var corners = cornerDetector.Process();
 
         var piece = new Piece(outline, corners);

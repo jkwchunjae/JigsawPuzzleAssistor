@@ -40,6 +40,26 @@ public class WorkspaceService
 
         return true;
     }
+    public bool ReadyToTable()
+    {
+        if (workspace == null)
+            return false;
+
+        if (!Directory.Exists(workspace.InfoDir))
+            return false;
+        if (!Directory.Exists(workspace.ConnectionDir))
+            return false;
+
+        var infos = Directory.EnumerateFiles(workspace.InfoDir);
+        if (infos.Empty())
+            return false;
+
+        var connections = Directory.EnumerateFiles(workspace.ConnectionDir);
+        if (connections.Empty())
+            return false;
+
+        return true;
+    }
     public async Task SaveCornerErrorsAsync(CornerErrorResult[] errors)
     {
         if (workspace == null)

@@ -23,9 +23,21 @@ internal class CornerDetector
     public Outline Outline { get; init; }
     private PointF[] Corners { get; set; }
 
-    public CornerDetector(Outline outline)
+    CornerDetectArgument cornerDetectArgument = new CornerDetectArgument
+    {
+        MaxCorners = 4,
+        QualityLevel = 0.01,
+        MinDistance = 100,
+        BlockSize = 9,
+    };
+
+    public CornerDetector(Outline outline, CornerDetectArgument? detectArgument = null)
     {
         Outline = outline;
+        if (detectArgument != null)
+        {
+            cornerDetectArgument = detectArgument!;
+        }
     }
 
     public PointF[] Process()
@@ -33,7 +45,7 @@ internal class CornerDetector
         if (Corners != null)
             return Corners;
 
-        var d = new Emgu.CV.Features2D.GFTTDetector(4, 0.01, 200, 9);
+        var d = new Emgu.CV.Features2D.GFTTDetector(cornerDetectArgument.MaxCorners, cornerDetectArgument.QualityLevel, cornerDetectArgument.MinDistance, cornerDetectArgument.BlockSize);
         var corners = d.Detect(Outline.GetImage());
 
         // 점을 시계방향으로 정렬
@@ -73,9 +85,9 @@ internal class CornerDetector
         return Corners;
     }
 
-    public PointF[] GetCornerWithArgument(CornerDetectArgument arg)
+    public PointF[] GetCornerWithArgument(CornerDetectArgument cornerDetectArgument)
     {
-        var d = new Emgu.CV.Features2D.GFTTDetector(arg.MaxCorners, arg.QualityLevel, arg.MinDistance, arg.BlockSize);
+        var d = new Emgu.CV.Features2D.GFTTDetector(cornerDetectArgument.MaxCorners, cornerDetectArgument.QualityLevel, cornerDetectArgument.MinDistance, cornerDetectArgument.BlockSize);
         var corners = d.Detect(Outline.GetImage());
 
         return corners.Select(point => point.Point).ToArray();
