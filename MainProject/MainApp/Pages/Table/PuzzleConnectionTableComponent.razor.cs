@@ -79,6 +79,10 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
 
     private int GetCellNumber(int row, int column)
     {
+        var suggCell = SuggestionSet?.GetCell(row, column);
+        if (suggCell != null)
+            return suggCell.PieceNumber;
+
         if (Table == null)
             return 0;
         if (row < 0 || row >= Table.RowCount)
@@ -109,8 +113,8 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
 
     private float GetValueBetweenCell(int row1, int column1, int row2, int column2)
     {
-        var cell1 = GetCellFromTable(row1, column1);
-        var cell2 = GetCellFromTable(row2, column2);
+        var cell1 = GetCellFromTable(row1, column1) ?? SuggestionSet?.GetCell(row1, column1);
+        var cell2 = GetCellFromTable(row2, column2) ?? SuggestionSet?.GetCell(row2, column2);
 
         return GetValueBetweenCell(cell1, cell2);
     }

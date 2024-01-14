@@ -222,8 +222,10 @@ public class PuzzleTableService
 
     public float GetValueBetweenCell(PuzzleCell cell1, PuzzleCell cell2)
     {
-        var connectInfo = _connectInfos.First(x => x.PieceName == cell1.PieceName);
+        var connectInfo = _connectInfos.FirstOrDefault(x => x.PieceName == cell1.PieceName);
+        if (connectInfo == null)
+            return 0f;
         var edge = connectInfo.Edges[cell1.GetEdgeIndex((cell2.Row, cell2.Column))];
-        return edge.Connection.First(x => x.PieceName == cell2.PieceName).Value;
+        return edge.Connection.FirstOrDefault(x => x.PieceName == cell2.PieceName)?.Value ?? 0f;
     }
 }

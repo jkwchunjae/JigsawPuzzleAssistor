@@ -6,6 +6,7 @@
     <PuzzleConnectionTableComponent Service="_service"
                                     Table="_puzzleTable"
                                     Targets="_targets"
+                                    SuggestionSet="_testSet"
                                     OnAddTarget="@(e => AddTarget(e.Row, e.Column))"
                                     OnRemoveTarget="@(e => RemoveTarget(e.Row, e.Column))"
                                     />
@@ -47,6 +48,14 @@
                 }
                 <td>
                     <MudButton OnClick="(() => SelectSuggestionSet(suggestionSet))">선택</MudButton>
+                    @if (_testSet == suggestionSet)
+                    {
+                        <MudButton OnClick="(() => CancelSuggestionSet(suggestionSet))">취소</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton OnClick="(() => TestSuggestionSet(suggestionSet))">넣어보기</MudButton>
+                    }
                 </td>
             </tr>
         }

@@ -21,6 +21,7 @@ public partial class PuzzleTableComponent : ComponentBase
     List<(int Row, int Column)> _targets = new();
     int targetLimit = 10;
     List<SuggestionSet> _suggestionSets = new();
+    SuggestionSet? _testSet = null;
     List<(int Row, int Column, int Number, HintFlag Flag)> _hint = new();
 
     int displayColumnStart = 0;
@@ -96,7 +97,20 @@ public partial class PuzzleTableComponent : ComponentBase
         _puzzleTable = await _service.SelectTableCell(set.Cells);
         _targets = new();
         _suggestionSets = new();
+        _testSet = null;
         StateHasChanged();
+    }
+    private Task TestSuggestionSet(SuggestionSet set)
+    {
+        _testSet = set;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    private Task CancelSuggestionSet(SuggestionSet set)
+    {
+        _testSet = null;
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 
     private void HintYes(int row, int column, int number)
