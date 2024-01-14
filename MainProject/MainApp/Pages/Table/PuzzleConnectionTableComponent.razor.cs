@@ -16,6 +16,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
     [Parameter] public EventCallback<(int Row, int Column)> OnRemoveTarget { get; set; }
 
     bool ShowValue;
+    List<(int Row, int Column)> Ignores = new();
 
     private Range RowRange = new Range(0, 1);
     private Range ColumnRange = new Range(0, 1);
@@ -147,4 +148,26 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
         }
     }
 
+    private bool Ignored(int row, int column)
+    {
+        return Ignores.Contains((row, column));
+    }
+    private Task Ignore(int row, int column)
+    {
+        if (!Ignored(row, column))
+        {
+            Ignores.Add((row, column));
+            Service.SetIgnores(Ignores);
+        }
+        return Task.CompletedTask;
+    }
+    private Task Unignore(int row, int column)
+    {
+        if (Ignored(row, column))
+        {
+            Ignores.Remove((row, column));
+            Service.SetIgnores(Ignores);
+        }
+        return Task.CompletedTask;
+    }
 }

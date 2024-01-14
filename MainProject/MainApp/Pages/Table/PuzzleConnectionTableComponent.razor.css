@@ -43,3 +43,7 @@ td.cell button.target-remove {
     color: white;
 }
 
+td.cell button.target-ignored {
+    background-color: #ffc8c8;
+}
+

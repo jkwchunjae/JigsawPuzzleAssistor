@@ -21,6 +21,7 @@ public class PuzzleTableService
     protected PieceInfo[] _pieceInfos = Array.Empty<PieceInfo>();
     protected ConnectInfo[] _connectInfos = Array.Empty<ConnectInfo>();
     protected PuzzleTable _puzzleTable = null;
+    private List<(int Row, int Column)> _ignores = new();
 
     public PuzzleTable PuzzleTable => _puzzleTable;
 
@@ -29,6 +30,11 @@ public class PuzzleTableService
         _pieceInfoDirectory = option.PieceInfoDirectory;
         _connectInfoDirectory = option.ConnectInfoDirectory;
         _puzzleTableFilePath = option.PuzzleTableFilePath;
+    }
+
+    public void SetIgnores(List<(int Row, int Column)> ignores)
+    {
+        _ignores = ignores;
     }
 
     /// <summary>
@@ -142,7 +148,7 @@ public class PuzzleTableService
     private bool HasNearCell((int Row, int Column) target, SuggestionSet? suggestionSet)
     {
         var direction = new(int Row, int Column)[] { (0, -1), (1, 0), (0, 1), (-1, 0) };
-        if (direction.Any(d => _puzzleTable.GetCell(target.Row + d.Row, target.Column + d.Column) != null))
+        if (direction.Any(d => _puzzleTable.GetCell(target.Row + d.Row, target.Column + d.Column, _ignores) != null))
         {
             return true;
         }
@@ -157,7 +163,7 @@ public class PuzzleTableService
     {
         var direction = new(int Row, int Column)[] { (0, -1), (1, 0), (0, 1), (-1, 0) };
         var fromTable = direction
-            .Select(d => _puzzleTable.GetCell(target.Row + d.Row, target.Column + d.Column))
+            .Select(d => _puzzleTable.GetCell(target.Row + d.Row, target.Column + d.Column, _ignores))
             .Where(x => x != null)
             .Select(x => x!)
             .ToArray();

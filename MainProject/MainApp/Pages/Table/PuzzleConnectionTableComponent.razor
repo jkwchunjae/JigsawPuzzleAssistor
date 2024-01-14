@@ -69,7 +69,18 @@
                     }
                     else
                     {
-                        @cellNumber
+                        @if (Ignored(row, column))
+                        {
+                            <button class="cell-button target-ignored" @onclick="@(e => Unignore(rowIndex, columnIndex))">
+                                @cellNumber
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="cell-button target-normal" @onclick="@(e => Ignore(rowIndex, columnIndex))">
+                                @cellNumber
+                            </button>
+                        }
                     }
                 </td>
                 if (column != ColumnRange.End.Value && ShowValue)

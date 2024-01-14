@@ -13,11 +13,13 @@ public class PuzzleTable
     [JsonIgnore] public int RowCount => Cells.Count;
     [JsonIgnore] public int ColumnCount => Cells.Max(x => x?.Count ?? 0);
 
-    public PuzzleCell? GetCell(int row, int column)
+    public PuzzleCell? GetCell(int row, int column, List<(int Row, int Column)>? ignores = null)
     {
         if (row < 0 || row >= Cells.Count)
             return null;
         if (column < 0 || column >= Cells[row].Count)
+            return null;
+        if (ignores?.Contains((row, column)) ?? false)
             return null;
         return Cells[row][column];
     }
