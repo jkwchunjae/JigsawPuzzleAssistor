@@ -75,6 +75,7 @@ public class SinglePieceImageProcessor : ISinglePieceImageProcessor
             Name = Path.GetFileNameWithoutExtension(imagePath),
             //Outline = outline.GetContour(),
             Corners = corners,
+            PredefinedCorners = predefinedCorner,
             Edges = piece.Edges.Select(edge => new EdgeInfo
             {
                 Type = edge.Type,

@@ -1,8 +1,10 @@
-﻿using PictureToData;
+﻿using Common.PieceInfo;
+using PictureToData;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Text.Json;
 
 namespace MainApp.Service;
 
@@ -40,7 +42,9 @@ public class ImageCornerService
         {
             var fileName = Path.GetFileName(file);
             var outputPath = Path.Join(workspace.CornerDir, fileName);
-            var corners = await pieceService.GetCornerWithArgument(file, cornerArgs);
+            var (hasPredefined, predefinedCorners) = await CheckPredefinedCorner(file);
+
+            var corners = hasPredefined ? predefinedCorners! : await pieceService.GetCornerWithArgument(file, cornerArgs);
             await pieceService.MakeCornerAssistImageAsync(file, outputPath, corners, _ =>
             {
                 return (Radius: 5, color: Color.White, thickness);
@@ -74,6 +78,44 @@ public class ImageCornerService
         var cornerFiles = Directory.GetFiles(workspace.CornerDir);
 
         return (errors2, files);
+    }
+
+    public async Task<(bool Exists, PointF[]? Corners)> CheckPredefinedCorner(string filePath)
+    {
+        var infoPath = Path.Join(workspace.InfoDir, $"{Path.GetFileNameWithoutExtension(filePath)}.json");
+
+        if (File.Exists(infoPath))
+        {
+            JsonSerializerOptions serializeOption = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Converters =
+                {
+                    new PointFJsonConverter(),
+                    new PointArrayJsonConverter(),
+                    new PointFArrayJsonConverter(),
+                },
+            };
+
+            var text = await File.ReadAllTextAsync(infoPath);
+            var pieceInfo = JsonSerializer.Deserialize<PieceInfo>(text, serializeOption);
+
+            if (pieceInfo?.PredefinedCorners?.Any() ?? false)
+            {
+                return (true, pieceInfo.PredefinedCorners!);
+            }
+        }
+
+        return (false, null);
+    }
+
+    public async Task SaveCornerImage(string imageFullPath, PointF[] corners, int thickness = 1)
+    {
+        var resizeImage = Path.Join(workspace.ResizeDir, Path.GetFileName(imageFullPath));
+        await pieceService.MakeCornerAssistImageAsync(resizeImage, imageFullPath, corners, _ =>
+        {
+            return (Radius: 5, color: Color.White, thickness: thickness);
+        });
     }
 
     public async Task<(string FileName, PointF[] Corners)> MakeCornerSelectionFile(string input, List<PointF> selected)

@@ -137,6 +137,7 @@ public partial class CornerPage : ComponentBase
             {
                 var pieceInfoService = new PieceInfoService(workspace!);
                 await pieceInfoService.CreatePieceInfoWithPredefinedCorner(SelectedError!.FullPath, selected.ToArray());
+                await cornerService.SaveCornerImage(SelectedError!.FullPath, selected.ToArray(), 3);
 
                 var index = CornerErrors.Select((x, i) => (Item: x, Index: i))
                     .First(x => x.Item == SelectedError).Index;
@@ -150,6 +151,7 @@ public partial class CornerPage : ComponentBase
             {
                 var pieceInfoService = new PieceInfoService(workspace!);
                 await pieceInfoService.CreatePieceInfoWithPredefinedCorner(selectedImage, selected.ToArray());
+                await cornerService.SaveCornerImage(currentCornerImage, selected.ToArray(), 3);
 
                 var index = normalImages.Select((x, i) => (Item: x, Index: i))
                     .First(x => x.Item == selectedImage).Index;
@@ -158,7 +160,6 @@ public partial class CornerPage : ComponentBase
                 {
                     await ImageSelectChanged(normalImages[nextIndex]);
                 }
-
             }
         }
     }

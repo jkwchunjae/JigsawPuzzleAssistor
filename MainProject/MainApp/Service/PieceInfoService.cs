@@ -42,8 +42,17 @@ public class PieceInfoService
         {
             try
             {
-                var info = await processor.MakePieceInfoAsync(file, argument);
-                fileInfoDictionary[file] = info;
+                var (hasPredefined, predefinedCorners) = await CheckPredefinedCorner(file);
+                if (hasPredefined)
+                {
+                    var info = await processor.MakePieceInfoWithPredefinedCornerAsync(file, predefinedCorners!);
+                    fileInfoDictionary[file] = info;
+                }
+                else
+                {
+                    var info = await processor.MakePieceInfoAsync(file, argument);
+                    fileInfoDictionary[file] = info;
+                }
             }
             catch (Exception ex)
             {
@@ -98,6 +107,7 @@ public class PieceInfoService
     {
         ISinglePieceImageProcessor processor = new SinglePieceImageProcessor();
         var pieceInfo = await processor.MakePieceInfoWithPredefinedCornerAsync(input, corners);
+        pieceInfo.PredefinedCorners = corners;
 
         var serializeOption = new JsonSerializerOptions
         {
@@ -109,9 +119,42 @@ public class PieceInfoService
                 new PointFArrayJsonConverter(),
             },
         };
+        if (!Directory.Exists(workspace.InfoDir))
+        {
+            Directory.CreateDirectory(workspace.InfoDir);
+        }
         var fileName = Path.GetFileNameWithoutExtension(input);
         var targetPath = Path.Join(workspace.InfoDir, $"{fileName}.json");
 
         await File.WriteAllTextAsync(targetPath, JsonSerializer.Serialize(pieceInfo, serializeOption));
+    }
+
+    public async Task<(bool Exists, PointF[]? Corners)> CheckPredefinedCorner(string filePath)
+    {
+        var infoPath = Path.Join(workspace.InfoDir, $"{Path.GetFileNameWithoutExtension(filePath)}.json");
+
+        if (File.Exists(infoPath))
+        {
+            JsonSerializerOptions serializeOption = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Converters =
+                {
+                    new PointFJsonConverter(),
+                    new PointArrayJsonConverter(),
+                    new PointFArrayJsonConverter(),
+                },
+            };
+
+            var text = await File.ReadAllTextAsync(infoPath);
+            var pieceInfo = JsonSerializer.Deserialize<PieceInfo>(text, serializeOption);
+
+            if (pieceInfo?.PredefinedCorners?.Any() ?? false)
+            {
+                return (true, pieceInfo.PredefinedCorners!);
+            }
+        }
+
+        return (false, null);
     }
 }
