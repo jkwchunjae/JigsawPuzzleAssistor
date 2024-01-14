@@ -14,6 +14,9 @@ public partial class ConnectionPage : ComponentBase
 
     int ProgressValue = 0;
 
+    string PieceName = string.Empty;
+    string UpdateText = "갱신";
+
     protected override Task OnInitializedAsync()
     {
         if (workspace == null)
@@ -43,5 +46,21 @@ public partial class ConnectionPage : ComponentBase
         };
         _ = connectionService.Start();
         return Task.CompletedTask;
+    }
+
+    async Task Update()
+    {
+        var connectionService = new ConnectionInfoService(workspace!);
+
+        if (PieceName.Length >= 4)
+        {
+            UpdateText = "갱신중...";
+            await connectionService.UpdateAsync(PieceName);
+            UpdateText = "갱신 완료";
+        }
+        else
+        {
+            UpdateText = "4글자 이상 입력하세요.";
+        }
     }
 }

@@ -11,3 +11,8 @@
 </MudButton>
 
 <MudProgressLinear Size="Size.Large" Value="ProgressValue" />
+
+<div>
+    <MudTextField T="string" @bind-Value="PieceName" Class="d-inline-block" />
+    <MudButton Variant="Variant.Outlined" OnClick="@(() => Update())">@UpdateText</MudButton>
+</div>
