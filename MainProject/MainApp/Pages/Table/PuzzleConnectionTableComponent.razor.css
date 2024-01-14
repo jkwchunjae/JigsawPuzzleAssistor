@@ -1,0 +1,45 @@
+﻿table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+
+
+th.index input {
+    width: 55px;
+    text-align: center;
+    font-weight: bold;
+}
+
+td,th {
+    width: 55px;
+    border: 1px solid rgb(216, 216, 216);
+}
+
+td.piece {
+    height: 45px;
+    font-size: large;
+}
+
+td.value {
+    font-size: smaller;
+    color: #808080;
+}
+
+td {
+    text-align: center;
+}
+td.cell button {
+    width: 100%;
+    height: 100%;
+}
+
+
+td.cell button.target-add {
+}
+
+td.cell button.target-remove {
+    background-color: seagreen;
+    color: white;
+}
+

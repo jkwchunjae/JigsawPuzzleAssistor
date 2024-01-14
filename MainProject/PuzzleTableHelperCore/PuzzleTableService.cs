@@ -219,4 +219,11 @@ public class PuzzleTableService
         var text = await File.ReadAllTextAsync(_puzzleTableFilePath);
         return JsonSerializer.Deserialize<PuzzleTable>(text)!;
     }
+
+    public float GetValueBetweenCell(PuzzleCell cell1, PuzzleCell cell2)
+    {
+        var connectInfo = _connectInfos.First(x => x.PieceName == cell1.PieceName);
+        var edge = connectInfo.Edges[cell1.GetEdgeIndex((cell2.Row, cell2.Column))];
+        return edge.Connection.First(x => x.PieceName == cell2.PieceName).Value;
+    }
 }

@@ -1,0 +1,112 @@
+﻿
+<MudSwitch @bind-Value="ShowValue" Color="Color.Primary" Label="연결 값"/>
+
+<table>
+    <tr>
+        <th>..</th>
+        @for (int column = ColumnRange.Start.Value; column <= ColumnRange.End.Value; column++)
+        {
+            @if (column == ColumnRange.Start.Value)
+            {
+                <th class="column index">
+                    <input @oninput="@(e => ColumnStartChanged(e))" type="number" value="@column" />
+                </th>
+            }
+            else if (column == ColumnRange.End.Value)
+            {
+                <th class="column index">
+                    <input @oninput="@(e => ColumnEndChanged(e))" type="number" value="@column" />
+                </th>
+            }
+            else
+            {
+                <th class="column index">@column</th>
+            }
+
+            if (column != ColumnRange.End.Value && ShowValue)
+            {
+                <th class="column index"></th>
+            }
+        }
+    </tr>
+    @for (int row = RowRange.Start.Value; row <= RowRange.End.Value; row++)
+    {
+        var rowIndex = row;
+        <tr>
+            @if (row == RowRange.Start.Value)
+            {
+                <th class="row index">
+                    <input @oninput="@(e => RowStartChanged(e))" type="number" value="@row" />
+                </th>
+            }
+            else if (row == RowRange.End.Value)
+            {
+                <th class="row index">
+                    <input @oninput="@(e => RowEndChanged(e))" type="number" value="@row" />
+                </th>
+            }
+            else
+            {
+                <th class="row index">@row</th>
+            }
+            @for (int column = ColumnRange.Start.Value; column <= ColumnRange.End.Value; column++)
+            {
+                var columnIndex = column;
+                var cellNumber = GetCellNumber(row, column);
+                <td class="piece cell">
+                    @if (cellNumber == 0)
+                    {
+                        @if (IsTarget(row, column))
+                        {
+                            <button class="cell-button target-remove" @onclick="@(e => RemoveTarget(rowIndex, columnIndex))">-</button>
+                        }
+                        else
+                        {
+                            <button class="cell-button target-add" @onclick="@(e => AddTarget(rowIndex, columnIndex))">+</button>
+                        }
+                    }
+                    else
+                    {
+                        @cellNumber
+                    }
+                </td>
+                if (column != ColumnRange.End.Value && ShowValue)
+                {
+                    var value = GetValueBetweenCell(row, column, row, column + 1);
+                    <td class="value">
+                        @if (value == 0)
+                        {
+                        }
+                        else
+                        {
+                            @value
+                        }
+                    </td>
+                }
+            }
+        </tr>
+        @if (row != RowRange.End.Value && ShowValue)
+        {
+            <tr>
+                <th class="row index">&nbsp;</th>
+                @for (int column = ColumnRange.Start.Value; column <= ColumnRange.End.Value; column++)
+                {
+                    var value = GetValueBetweenCell(row, column, row + 1, column);
+                    <td class="value">
+                        @if (value == 0)
+                        {
+                        }
+                        else
+                        {
+                            @value
+                        }
+                    </td>
+                    if (column != ColumnRange.End.Value)
+                    {
+                        <td></td>
+                    }
+                }
+            </tr>
+        }
+    }
+</table>
