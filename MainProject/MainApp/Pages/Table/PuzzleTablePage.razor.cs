@@ -18,6 +18,8 @@ public partial class PuzzleTablePage : ComponentBase
     string[] tables = Array.Empty<string>();
     string selectedTablePath = string.Empty;
 
+    string NewTableName { get; set; } = string.Empty;
+
     PuzzleTableServiceOption? puzzleTableServiceOption = null;
 
     protected override async Task OnInitializedAsync()
@@ -58,5 +60,16 @@ public partial class PuzzleTablePage : ComponentBase
             PuzzleTableFilePath = path,
         };
         puzzleTableServiceOption = tableServiceOption;
+    }
+
+    async Task CreateNewTable()
+    {
+        if (string.IsNullOrWhiteSpace(NewTableName))
+        {
+            return;
+        }
+        await service.CreatePuzzleTable(NewTableName.Trim(), null);
+        await LoadTables();
+        StateHasChanged();
     }
 }

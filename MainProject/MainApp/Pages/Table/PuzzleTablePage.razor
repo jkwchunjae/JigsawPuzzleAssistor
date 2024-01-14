@@ -6,7 +6,10 @@
 <MudText Typo="Typo.body1">확인했습니다.</MudText>
 <MudText Typo="Typo.body1">퍼즐 데이터에서 퍼즐 간 연결 정보를 생성합니다.</MudText>
 
+<div>
+
 <MudSelect T="string"
+    Style="max-width: 300px;"
     ToStringFunc="new Func<string, string>(path => Path.GetFileNameWithoutExtension(path))"
     Value="selectedTablePath"
     ValueChanged="@((f) => TableChanged(f))"
@@ -16,6 +19,11 @@
         <MudSelectItem Value="@file" />
     }
 </MudSelect>
+
+<MudInput T="string" @bind-Value="NewTableName"/>
+<MudButton OnClick="(() => CreateNewTable())">새 테이블 생성</MudButton>
+
+</div>
 
 
 @if (puzzleTableServiceOption != null)

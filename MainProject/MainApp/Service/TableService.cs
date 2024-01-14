@@ -31,7 +31,7 @@ public class TableService
         return table;
     }
 
-    public async Task CreatePuzzleTable(string fileName, PuzzleCell initCell)
+    public async Task CreatePuzzleTable(string fileName, PuzzleCell? initCell)
     {
         if (!Directory.Exists(workspace.ResultDir))
         {
@@ -48,6 +48,7 @@ public class TableService
         {
             WriteIndented = true,
         });
+        fileName = fileName.EndsWith(".json") ? fileName : $"{fileName}.json";
         var filePath = Path.Combine(workspace.ResultDir, fileName);
         await File.WriteAllTextAsync(filePath, json);
     }
