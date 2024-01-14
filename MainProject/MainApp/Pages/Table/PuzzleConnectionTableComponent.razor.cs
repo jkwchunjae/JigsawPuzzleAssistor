@@ -16,10 +16,29 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
     [Parameter] public EventCallback<(int Row, int Column)> OnRemoveTarget { get; set; }
 
     bool ShowValue;
+    bool ReverseLeftRight;
     List<(int Row, int Column)> Ignores = new();
 
     private Range RowRange = new Range(0, 1);
     private Range ColumnRange = new Range(0, 1);
+
+    private IEnumerable<int> Rows()
+    {
+        return Enumerable.Range(RowRange.Start.Value, RowRange.End.Value - RowRange.Start.Value + 1);
+    }
+
+    private IEnumerable<int> Columns()
+    {
+        var range = Enumerable.Range(ColumnRange.Start.Value, ColumnRange.End.Value - ColumnRange.Start.Value + 1);
+        if (ReverseLeftRight)
+        {
+            return range.Reverse();
+        }
+        else
+        {
+            return range;
+        }
+    }
 
     private Task ColumnStartChanged(ChangeEventArgs e)
     {
