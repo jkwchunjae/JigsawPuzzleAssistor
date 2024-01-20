@@ -65,6 +65,16 @@ public class ImageCornerService
                     Error = errorNot4Corners,
                 });
             }
+            else if (!pieceService.IsRectangle(corners))
+            {
+                const string errorNotRectangle = "코너가 사각형이 아닙니다.";
+                errors.Add(new CornerErrorResult
+                {
+                    FullPath = file,
+                    FileName = fileName,
+                    Error = errorNotRectangle,
+                });
+            }
         });
 
         if (openFolder)
@@ -122,8 +132,8 @@ public class ImageCornerService
     {
         var argument = new CornerDetectArgument
         {
-            MaxCorners = 20,
-            BlockSize = 5,
+            MaxCorners = 30,
+            BlockSize = 3,
             MinDistance = 30,
             QualityLevel = 0.01,
         };

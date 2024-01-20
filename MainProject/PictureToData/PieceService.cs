@@ -26,8 +26,8 @@ public class PieceService
         var outline = new Outline(imagePath);
         await outline.ProcessAsync();
 
-        var cornerDetector = new CornerDetector(outline);
-        var corners = cornerDetector.GetCornerWithArgument(detectArgument);
+        var cornerDetector = new CornerDetector(outline, detectArgument);
+        var corners = cornerDetector.Process();
 
         return corners;
     }
@@ -82,5 +82,26 @@ public class PieceService
         }
 
         CvInvoke.Imwrite(outputPath, outlineImage);
+    }
+
+    public bool IsRectangle(PointF[] points)
+    {
+        var d1 = Utils.Distance(points[0], points[1]);
+        var d2 = Utils.Distance(points[1], points[2]);
+        var d3 = Utils.Distance(points[2], points[3]);
+        var d4 = Utils.Distance(points[3], points[0]);
+
+        var diagonal1 = Utils.Distance(points[0], points[2]);
+        var diagonal2 = Utils.Distance(points[1], points[3]);
+
+        var ratio1 = Ratio(d1, d3);
+        var ratio2 = Ratio(d2, d4);
+        var ratio3 = Ratio(diagonal1, diagonal2);
+
+        var isRectangle = ratio1 > 0.8 && ratio2 > 0.8 && ratio3 > 0.8;
+
+        return isRectangle;
+
+        double Ratio(double a, double b) => Math.Min(a, b) / Math.Max(a, b);
     }
 }
