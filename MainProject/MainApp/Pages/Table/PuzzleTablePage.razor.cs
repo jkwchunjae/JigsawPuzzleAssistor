@@ -29,11 +29,6 @@ public partial class PuzzleTablePage : ComponentBase
             NavigationManager.NavigateTo("/start");
             return;
         }
-        else if (!WorkspaceService.HasCroppedImage())
-        {
-            NavigationManager.NavigateTo("/outline");
-            return;
-        }
         else if (!WorkspaceService.ReadyToTable())
         {
             NavigationManager.NavigateTo("/info");
