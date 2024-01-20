@@ -1,0 +1,30 @@
+{
+  "PieceName": "puzzle_01049",
+  "Edges": [
+    {
+      "Index": 0,
+      "Connection": []
+    },
+    {
+      "Index": 1,
+      "Connection": []
+    },
+    {
+      "Index": 2,
+      "Connection": [
+        "puzzle_01735, 0, 0.876",
+        "puzzle_00319, 2, 2.288",
+        "puzzle_01252, 2, 3.018",
+        "puzzle_01714, 2, 3.149",
+        "puzzle_00348, 2, 3.705"
+      ]
+    },
+    {
+      "Index": 3,
+      "Connection": [
+        "puzzle_00813, 3, 3.712",
+        "puzzle_01211, 3, 4.636"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "PieceName": "puzzle_01898",
+  "Edges": [
+    {
+      "Index": 0,
+      "Connection": []
+    },
+    {
+      "Index": 1,
+      "Connection": [
+        "puzzle_01304, 0, 2.427",
+        "puzzle_00763, 2, 2.855",
+        "puzzle_01964, 2, 4.753",
+        "puzzle_00995, 2, 4.775"
+      ]
+    },
+    {
+      "Index": 2,
+      "Connection": [
+        "puzzle_01228, 1, 2.625",
+        "puzzle_01859, 3, 3.620",
+        "puzzle_00961, 3, 3.672",
+        "puzzle_01922, 1, 3.777",
+        "puzzle_01553, 1, 3.781",
+        "puzzle_01062, 3, 3.890",
+        "puzzle_01531, 3, 4.036",
+        "puzzle_01740, 3, 4.105",
+        "puzzle_01962, 1, 4.131",
+        "puzzle_01608, 1, 4.383",
+        "puzzle_01903, 3, 4.539",
+        "puzzle_01240, 3, 4.554"
+      ]
+    },
+    {
+      "Index": 3,
+      "Connection": []
+    }
+  ]
+}
