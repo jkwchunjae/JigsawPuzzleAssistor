@@ -86,7 +86,7 @@
                 </td>
                 if (column != ColumnRange.End.Value && ShowValue)
                 {
-                    var value = GetValueBetweenCell(row, column, row, column + 1);
+                    var value = GetValueBetweenCell(row, column, row, column + (ReverseLeftRight ? -1 : 1));
                     <td class="value">
                         @if (value == 0)
                         {
