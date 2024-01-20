@@ -65,7 +65,7 @@ public partial class CornerPage : ComponentBase
         {
             MaxCorners = 4,
             QualityLevel = 0.01,
-            MinDistance = 100,
+            MinDistance = 160,
             BlockSize = 9,
         };
 
@@ -93,6 +93,7 @@ public partial class CornerPage : ComponentBase
             var (cornerSelectionFileName, corners) = await cornerService.MakeCornerSelectionFile(error!.FullPath, selected);
             this.corners = corners;
             cornerSelectionImage = cornerSelectionFileName;
+            currentCornerImage = Path.Join(workspace!.CornerDir, Path.GetFileName(cornerSelectionImage));
 
             this.selectType = "error";
         }
@@ -137,7 +138,7 @@ public partial class CornerPage : ComponentBase
             {
                 var pieceInfoService = new PieceInfoService(workspace!);
                 await pieceInfoService.CreatePieceInfoWithPredefinedCorner(SelectedError!.FullPath, selected.ToArray());
-                await cornerService.SaveCornerImage(SelectedError!.FullPath, selected.ToArray(), 3);
+                await cornerService.SaveCornerImage(cornerSelectionImage, selected.ToArray(), 3);
 
                 var index = CornerErrors.Select((x, i) => (Item: x, Index: i))
                     .First(x => x.Item == SelectedError).Index;
