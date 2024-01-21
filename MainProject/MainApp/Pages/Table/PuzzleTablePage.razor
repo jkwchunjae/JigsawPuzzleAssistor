@@ -2,10 +2,6 @@
 
 <PageTitle>퍼즐::맞추기</PageTitle>
 
-<MudText Typo="Typo.h4">퍼즐 맞추기</MudText>
-<MudText Typo="Typo.body1">확인했습니다.</MudText>
-<MudText Typo="Typo.body1">퍼즐 데이터에서 퍼즐 간 연결 정보를 생성합니다.</MudText>
-
 <div>
 
 <MudSelect T="string"
@@ -20,9 +16,6 @@
     }
 </MudSelect>
 
-<MudInput T="string" @bind-Value="NewTableName"/>
-<MudButton OnClick="(() => CreateNewTable())">새 테이블 생성</MudButton>
-
 </div>
 
 
@@ -32,3 +25,5 @@
         TableService="service"
         Option="puzzleTableServiceOption"/>
 }
+
+<div style="height: 100vh;width: 100px; display: block">&nbsp;</div>
