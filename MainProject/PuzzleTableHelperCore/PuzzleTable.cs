@@ -12,6 +12,7 @@ public class PuzzleTable
 
     [JsonIgnore] public int RowCount => Cells.Count;
     [JsonIgnore] public int ColumnCount => Cells.Max(x => x?.Count ?? 0);
+    [JsonIgnore] public int PieceCount => Cells.Sum(row => row.Count(cell => cell != null));
 
     public PuzzleCell? GetCell(int row, int column, List<(int Row, int Column)>? ignores = null)
     {
