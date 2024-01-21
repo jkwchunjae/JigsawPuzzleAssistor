@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MainApp.Service;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using PuzzleTableHelperCore;
 
@@ -8,6 +9,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
 {
     [Inject] IJSRuntime Js { get; set; } = null!;
     [Parameter] public PuzzleTableService Service { get; set; } = null!;
+    [Parameter] public TableService TableService { get; set; } = null!;
     [Parameter] public PuzzleTable? Table { get; set; } = null!;
     [Parameter] public SuggestionSet? SuggestionSet { get; set; } = null;
     [Parameter] public List<(int Row, int Column)> Targets { get; set; } = null;
@@ -20,6 +22,28 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
 
     private Range RowRange = new Range(0, 1);
     private Range ColumnRange = new Range(0, 1);
+
+    PuzzleTableInitOption TableInitOption => new PuzzleTableInitOption
+    {
+        ReverseLeftRight = ReverseLeftRight,
+        RowBegin = RowRange.Start.Value,
+        RowEnd = RowRange.End.Value,
+        ColumnBegin = ColumnRange.Start.Value,
+        ColumnEnd = ColumnRange.End.Value,
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var tableOption = await TableService.LoadTableInitOption(Path.GetFileName(Service.TableFilePath));
+        if (tableOption != null)
+        {
+            ReverseLeftRight = tableOption.ReverseLeftRight;
+            RowRange = new Range(tableOption.RowBegin, tableOption.RowEnd);
+            ColumnRange = new Range(tableOption.ColumnBegin, tableOption.ColumnEnd);
+        }
+    }
 
     private IEnumerable<int> Rows()
     {
@@ -39,40 +63,44 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
         }
     }
 
-    private Task ColumnStartChanged(ChangeEventArgs e)
+    private async Task ColumnStartChanged(ChangeEventArgs e)
     {
         var columnStart = GetValueFromEvent(e.Value);
         if (columnStart < 0)
-            return Task.CompletedTask;
+            return;
         var range = ColumnRange.End.Value - ColumnRange.Start.Value;
         ColumnRange = new Range(columnStart, columnStart + range);
-        return Task.CompletedTask;
+        await SaveTableInitOption();
+        return;
     }
-    private Task ColumnEndChanged(ChangeEventArgs e)
+    private async Task ColumnEndChanged(ChangeEventArgs e)
     {
         var columnEnd = GetValueFromEvent(e.Value);
         if (columnEnd <= ColumnRange.Start.Value)
-            return Task.CompletedTask;
+            return;
         ColumnRange = new Range(ColumnRange.Start, columnEnd);
-        return Task.CompletedTask;
+        await SaveTableInitOption();
+        return;
     }
 
-    private Task RowStartChanged(ChangeEventArgs e)
+    private async Task RowStartChanged(ChangeEventArgs e)
     {
         var rowStart = GetValueFromEvent(e.Value);
         if (rowStart < 0)
-            return Task.CompletedTask;
+            return;
         var range = RowRange.End.Value - RowRange.Start.Value;
         RowRange = new Range(rowStart, rowStart + range);
-        return Task.CompletedTask;
+        await SaveTableInitOption();
+        return;
     }
-    private Task RowEndChanged(ChangeEventArgs e)
+    private async Task RowEndChanged(ChangeEventArgs e)
     {
         var rowEnd = GetValueFromEvent(e.Value);
         if (rowEnd <= RowRange.Start.Value)
-            return Task.CompletedTask;
+            return;
         RowRange = new Range(RowRange.Start, rowEnd);
-        return Task.CompletedTask;
+        await SaveTableInitOption();
+        return;
     }
 
     private int GetValueFromEvent(object? eValue)
@@ -187,5 +215,11 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
             Service.SetIgnores(Ignores);
         }
         return Task.CompletedTask;
+    }
+
+    private Task SaveTableInitOption()
+    {
+        var fileName = Path.GetFileName(Service.TableFilePath);
+        return TableService.SaveTableInitOption(fileName, TableInitOption);
     }
 }

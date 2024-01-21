@@ -18,6 +18,8 @@ public class PuzzleTableService
     private readonly string _connectInfoDirectory;
     private readonly string _puzzleTableFilePath;
 
+    public string TableFilePath => _puzzleTableFilePath;
+
     protected PieceInfo[] _pieceInfos = Array.Empty<PieceInfo>();
     protected ConnectInfo[] _connectInfos = Array.Empty<ConnectInfo>();
     protected PuzzleTable _puzzleTable = null;

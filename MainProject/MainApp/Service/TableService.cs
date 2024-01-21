@@ -52,4 +52,31 @@ public class TableService
         var filePath = Path.Combine(workspace.ResultDir, fileName);
         await File.WriteAllTextAsync(filePath, json);
     }
+
+    public async Task<PuzzleTableInitOption?> LoadTableInitOption(string fileName)
+    {
+        var filePath = workspace.TableInitOptionPath(fileName);
+        if (!File.Exists(filePath))
+        {
+            return null;
+        }
+        var json = await File.ReadAllTextAsync(filePath);
+        var option = JsonSerializer.Deserialize<PuzzleTableInitOption>(json);
+        return option;
+    }
+
+    public async Task SaveTableInitOption(string fileName, PuzzleTableInitOption option)
+    {
+        var filePath = workspace.TableInitOptionPath(fileName);
+        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+        }
+
+        var json = JsonSerializer.Serialize(option, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+        });
+        await File.WriteAllTextAsync(filePath, json);
+    }
 }

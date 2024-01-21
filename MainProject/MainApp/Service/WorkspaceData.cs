@@ -19,4 +19,8 @@ public class WorkspaceData
     {
         return Path.Join(TempDir, "corner_selection", fileName);
     }
+    public string TableInitOptionPath(string fileName)
+    {
+        return Path.Join(TempDir, "table_init_option", fileName);
+    }
 }

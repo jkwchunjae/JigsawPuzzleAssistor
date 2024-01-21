@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MainApp.Service;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using PuzzleTableHelperCore;
 
@@ -14,6 +15,7 @@ public partial class PuzzleTableComponent : ComponentBase
 {
     [Inject] IJSRuntime Js { get; set; } = null!;
     [Parameter] public PuzzleTableServiceOption Option { get; set; } = null!;
+    [Parameter] public TableService TableService { get; set; } = null!;
 
     PuzzleTableService _service;
     PuzzleTable? _puzzleTable = null;
