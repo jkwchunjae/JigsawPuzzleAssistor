@@ -46,6 +46,11 @@ public class PuzzleTable
     {
         return Cells.Any(row => row.Any(cell => cell?.PieceNumber == pieceNumber));
     }
+
+    public bool Contains(string pieceName)
+    {
+        return Cells.Any(row => row.Any(cell => cell?.PieceName == pieceName));
+    }
 }
 
 public class PuzzleCell

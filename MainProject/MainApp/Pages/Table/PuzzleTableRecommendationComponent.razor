@@ -1,0 +1,16 @@
+@using MainApp.Service
+
+<MudTable T="RecommendedData" Items="RecommendedDatas">
+    <HeaderContent>
+        <MudTh>좌표</MudTh>
+        <MudTh>맞춘 퍼즐</MudTh>
+        <MudTh>추천 퍼즐</MudTh>
+        <MudTh>값</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Row @context.Column</MudTd>
+        <MudTd>@context.FixedPieceName</MudTd>
+        <MudTd>@context.RecommendedPieceName</MudTd>
+        <MudTd>@context.Value</MudTd> 
+    </RowTemplate>
+</MudTable>

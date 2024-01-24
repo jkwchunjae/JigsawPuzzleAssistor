@@ -25,11 +25,6 @@ public partial class SortedEdgePage : ComponentBase
             NavigationManager.NavigateTo("/start");
             return;
         }
-        else if (!WorkspaceService.HasCroppedImage())
-        {
-            NavigationManager.NavigateTo("/outline");
-            return;
-        }
 
         var files = Directory.GetFiles(workspace!.ConnectionDir);
         var connectionInfos = await files
@@ -41,6 +36,7 @@ public partial class SortedEdgePage : ComponentBase
             .Select(x => x.Piece1.CompareTo(x.Piece2) < 0 ? x : new EdgeInfo(x.Piece2, x.Piece1, x.Value))
             .Distinct()
             .OrderBy(x => x.Value)
+            .Take(1000)
             .ToArray();
     }
 

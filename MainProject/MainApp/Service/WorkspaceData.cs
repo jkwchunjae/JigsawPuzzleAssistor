@@ -23,4 +23,8 @@ public class WorkspaceData
     {
         return Path.Join(TempDir, "table_init_option", fileName);
     }
+    public string RecommendationExcludedPath()
+    {
+        return Path.Join(TempDir, "recommendation_excluded.json");
+    }
 }

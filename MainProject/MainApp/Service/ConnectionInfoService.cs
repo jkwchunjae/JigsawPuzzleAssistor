@@ -1,6 +1,5 @@
 ﻿using Common.PieceInfo;
 using JkwExtensions;
-using System.Security.Cryptography.Xml;
 using System.Text.Json;
 
 namespace MainApp.Service;
@@ -9,6 +8,8 @@ public class ConnectionInfoService
 {
     private WorkspaceData workspace;
     public event EventHandler<ProgressEventArgs>? ProgressChanged;
+
+    private ConnectInfo[]? connections;
 
     JsonSerializerOptions serializeOption = new JsonSerializerOptions
     {
@@ -274,5 +275,15 @@ public class ConnectionInfoService
             var jsonText = JsonSerializer.Serialize(connectInfo, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(connectInfoPath, jsonText);
         }
+    }
+
+    public async Task<ConnectInfo[]> GetAllConnectionsAsync()
+    {
+        if (connections == null)
+        {
+            connections = await LoadConnectInfoAsync();
+        }
+
+        return connections;
     }
 }

@@ -29,6 +29,8 @@ public partial class PuzzleTableComponent : ComponentBase
     int displayColumnStart = 0;
     int displayRowStart = 0;
 
+    (Range RowRange, Range ColumnRange) _targetRange = (new Range(0, 1), new Range(0, 1));
+
     protected override async Task OnInitializedAsync()
     {
         _service = new PuzzleTableService(Option);
@@ -125,5 +127,12 @@ public partial class PuzzleTableComponent : ComponentBase
     {
         _hint.Add((row, column, number, HintFlag.No));
         UpdateSuggestionSets(_suggestionSets);
+    }
+
+    private Task RangeChanged(Range rowRange, Range columnRange)
+    {
+        _targetRange = (rowRange, columnRange);
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }

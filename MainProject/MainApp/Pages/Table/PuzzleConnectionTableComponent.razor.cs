@@ -15,6 +15,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
     [Parameter] public List<(int Row, int Column)> Targets { get; set; } = null;
     [Parameter] public EventCallback<(int Row, int Column)> OnAddTarget { get; set; }
     [Parameter] public EventCallback<(int Row, int Column)> OnRemoveTarget { get; set; }
+    [Parameter] public EventCallback<(Range RowRange, Range ColumnRange)> OnRangeChanged { get; set; }
 
     bool ShowValue;
     bool ReverseLeftRight;
@@ -70,6 +71,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
             return;
         var range = ColumnRange.End.Value - ColumnRange.Start.Value;
         ColumnRange = new Range(columnStart, columnStart + range);
+        await OnRangeChanged.InvokeAsync((RowRange, ColumnRange));
         await SaveTableInitOption();
         return;
     }
@@ -79,6 +81,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
         if (columnEnd <= ColumnRange.Start.Value)
             return;
         ColumnRange = new Range(ColumnRange.Start, columnEnd);
+        await OnRangeChanged.InvokeAsync((RowRange, ColumnRange));
         await SaveTableInitOption();
         return;
     }
@@ -90,6 +93,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
             return;
         var range = RowRange.End.Value - RowRange.Start.Value;
         RowRange = new Range(rowStart, rowStart + range);
+        await OnRangeChanged.InvokeAsync((RowRange, ColumnRange));
         await SaveTableInitOption();
         return;
     }
@@ -99,6 +103,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
         if (rowEnd <= RowRange.Start.Value)
             return;
         RowRange = new Range(RowRange.Start, rowEnd);
+        await OnRangeChanged.InvokeAsync((RowRange, ColumnRange));
         await SaveTableInitOption();
         return;
     }

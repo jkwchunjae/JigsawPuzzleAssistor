@@ -43,6 +43,11 @@ public partial class PuzzleTablePage : ComponentBase
     async Task LoadTables()
     {
         tables = await service.GetTableFiles();
+
+        if (tables?.Length == 1)
+        {
+            await TableChanged(tables[0]);
+        }
     }
 
     async Task TableChanged(string path)
