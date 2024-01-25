@@ -12,6 +12,7 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
     [Parameter] public TableService TableService { get; set; } = null!;
     [Parameter] public PuzzleTable Table { get; set; } = null!;
     [Parameter] public (Range RowRange, Range ColumnRange) TargetRange { get; set; } = (new Range(0, 1), new Range(0, 1));
+    [Parameter] public EventCallback<RecommendedData> OnSelect { get; set; }
 
     RecommendedData[] RecommendedDatas = Array.Empty<RecommendedData>();
 
@@ -35,4 +36,8 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
         return base.OnParametersSetAsync();
     }
 
+    private Task Select(RecommendedData recommendedData)
+    {
+        return OnSelect.InvokeAsync(recommendedData);
+    }
 }

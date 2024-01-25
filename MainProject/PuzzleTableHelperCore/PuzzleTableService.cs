@@ -236,4 +236,69 @@ public class PuzzleTableService
         var edge = connectInfo.Edges[cell1.GetEdgeIndex((cell2.Row, cell2.Column))];
         return edge.Connection.FirstOrDefault(x => x.PieceName == cell2.PieceName)?.Value ?? 0f;
     }
+
+    public PuzzleCell MakePuzzleCell(string fixedPiece, int fixedEdge, string rPiece, int rEdge)
+    {
+        var info = _pieceInfos.First(x => x.Name == fixedPiece);
+        var fixedCell = _puzzleTable.Cells.SelectMany(x => x).First(x => x?.PieceName == fixedPiece);
+
+        if (info == null || fixedCell == null)
+        {
+            throw new Exception("info or cell is null");
+        }
+
+        var nextCell = GetRecommendedCell();
+        var nextTopIndex = CalcTopIndex();
+
+        return new PuzzleCell
+        {
+            Row = nextCell.Row,
+            Column = nextCell.Column,
+            PieceName = rPiece,
+            PieceNumber = _pieceInfos.First(x => x.Name == rPiece).Number,
+            TopEdgeIndex = nextTopIndex,
+        };
+
+        (int Row, int Column) GetRecommendedCell()
+        {
+            if (fixedCell?.TopEdgeIndex == fixedEdge)
+            {
+                return (fixedCell.Row - 1, fixedCell.Column);
+            }
+            if (fixedCell?.RightEdgeIndex == fixedEdge)
+            {
+                return (fixedCell.Row, fixedCell.Column + 1);
+            }
+            if (fixedCell?.BottomEdgeIndex == fixedEdge)
+            {
+                return (fixedCell.Row + 1, fixedCell.Column);
+            }
+            if (fixedCell?.LeftEdgeIndex == fixedEdge)
+            {
+                return (fixedCell.Row, fixedCell.Column - 1);
+            }
+            throw new Exception("invalid fixedEdge");
+        }
+
+        int CalcTopIndex()
+        {
+            if (fixedCell?.TopEdgeIndex == fixedEdge)
+            {
+                return (rEdge + 2) % 4;
+            }
+            if (fixedCell?.RightEdgeIndex == fixedEdge)
+            {
+                return (rEdge + 1) % 4;
+            }
+            if (fixedCell?.BottomEdgeIndex == fixedEdge)
+            {
+                return rEdge;
+            }
+            if (fixedCell?.LeftEdgeIndex == fixedEdge)
+            {
+                return (rEdge + 3) % 4;
+            }
+            throw new Exception("invalid fixedEdge");
+        }
+    }
 }

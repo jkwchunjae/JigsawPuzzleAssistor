@@ -135,4 +135,15 @@ public partial class PuzzleTableComponent : ComponentBase
         StateHasChanged();
         return Task.CompletedTask;
     }
+
+    private async Task SelectRecommended(RecommendedData recommendedData)
+    {
+        var rData = recommendedData;
+        var cell = _service.MakePuzzleCell(rData.FixedPieceName, rData.FixedEdgeIndex, rData.RecommendedPieceName, rData.RecommendedEdgeIndex);
+        _puzzleTable = await _service.SelectTableCell(new() { cell });
+        _targets = new();
+        _suggestionSets = new();
+        _testSet = null;
+        StateHasChanged();
+    }
 }

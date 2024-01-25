@@ -6,7 +6,7 @@ using PuzzleTableHelperCore;
 
 namespace MainApp.Service;
 
-internal class RecommendedData
+public class RecommendedData
 {
     public int Row { get; set; }
     public int Column { get; set; }
@@ -30,7 +30,7 @@ internal class RecommendedData
     }
 }
 
-internal class EdgeInfo
+public class EdgeInfo
 {
     public required string PieceName1 { get; set; }
     public required int EdgeIndex1 { get; set; }
@@ -45,7 +45,7 @@ internal class EdgeInfo
     }
 }
 
-internal class RecommendationService
+public class RecommendationService
 {
     private readonly WorkspaceData _workspace;
     private readonly PuzzleTable _table;
