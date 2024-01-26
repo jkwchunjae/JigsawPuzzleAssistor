@@ -26,6 +26,7 @@ public class PuzzleTableService
     private List<(int Row, int Column)> _ignores = new();
 
     public PuzzleTable PuzzleTable => _puzzleTable;
+    public ConnectInfo[] ConnectInfo => _connectInfos;
 
     public PuzzleTableService(PuzzleTableServiceOption option)
     {

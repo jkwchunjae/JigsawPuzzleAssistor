@@ -43,6 +43,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
             ReverseLeftRight = tableOption.ReverseLeftRight;
             RowRange = new Range(tableOption.RowBegin, tableOption.RowEnd);
             ColumnRange = new Range(tableOption.ColumnBegin, tableOption.ColumnEnd);
+            await OnRangeChanged.InvokeAsync((RowRange, ColumnRange));
         }
     }
 

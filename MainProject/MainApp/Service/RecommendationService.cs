@@ -1,6 +1,7 @@
 
 using System.Text.Json;
 using Common.PieceInfo;
+using JkwExtensions;
 using MudBlazor;
 using PuzzleTableHelperCore;
 
@@ -8,42 +9,54 @@ namespace MainApp.Service;
 
 public class RecommendedData
 {
-    public int Row { get; set; }
-    public int Column { get; set; }
-    public string FixedPieceName { get; set; }
-    public int FixedEdgeIndex { get; set; }
-    public string RecommendedPieceName { get; set; }
-    public int RecommendedEdgeIndex { get; set; }
+    public int TargetRow { get; set; }
+    public int TargetColumn { get; set; }
+    public Edge Fixed { get; set; }
+    public Edge Recommended { get; set; }
     public float Value { get; set; }
-    public EdgeInfo EdgeInfo { get; set; }
 
-    public RecommendedData(EdgeInfo edgeInfo, (PuzzleCell Cell, int Edge) targetEdge)
+    public int FixedNumber => Fixed.PieceName.Right(5).ToInt();
+    public int RecommendedNumber => Recommended.PieceName.Right(5).ToInt();
+
+    public RecommendedData(PuzzleCell cell, Edge key, Edge target, float value)
     {
-        EdgeInfo = edgeInfo;
-        FixedPieceName = targetEdge.Cell.PieceName;
-        FixedEdgeIndex = targetEdge.Edge;
-        RecommendedPieceName = edgeInfo.PieceName1 == FixedPieceName ? edgeInfo.PieceName2 : edgeInfo.PieceName1;
-        RecommendedEdgeIndex = edgeInfo.PieceName1 == FixedPieceName ? edgeInfo.EdgeIndex2 : edgeInfo.EdgeIndex1;
-        Value = edgeInfo.Value;
-        Row = targetEdge.Cell.Row;
-        Column = targetEdge.Cell.Column;
+        Fixed = key;
+        Recommended = target;
+        Value = value;
+
+        (TargetRow, TargetColumn) = GetTargetRowColumn(cell, key.EdgeIndex);
+    }
+
+    private (int Row, int Column) GetTargetRowColumn(PuzzleCell cell, int edgeIndex)
+    {
+        if (cell.TopEdgeIndex == edgeIndex)
+            return (cell.Row - 1, cell.Column);
+        if (cell.BottomEdgeIndex == edgeIndex)
+            return (cell.Row + 1, cell.Column);
+        if (cell.LeftEdgeIndex == edgeIndex)
+            return (cell.Row, cell.Column - 1);
+        if (cell.RightEdgeIndex == edgeIndex)
+            return (cell.Row, cell.Column + 1);
+        throw new Exception("Invalid edge index");
     }
 }
 
-public class EdgeInfo
+public record Edge(string PieceName, int EdgeIndex);
+
+public class EdgeWithValue
 {
-    public required string PieceName1 { get; set; }
-    public required int EdgeIndex1 { get; set; }
-    public required string PieceName2 { get; set; }
-    public required int EdgeIndex2 { get; set; }
+    public required Edge Edge1 { get; set; }
+    public required Edge Edge2 { get; set; }
     public required float Value { get; set; }
 
     public bool Contains(string pieceName, int edgeIndex)
     {
-        return (PieceName1 == pieceName && EdgeIndex1 == edgeIndex) ||
-            (PieceName2 == pieceName && EdgeIndex2 == edgeIndex);
+        var edge = new Edge(pieceName, edgeIndex);
+        return Edge1 == edge || Edge2 == edge;
     }
 }
+
+public record ExcludeData(int Row, int Column, string PieceName);
 
 public class RecommendationService
 {
@@ -51,24 +64,30 @@ public class RecommendationService
     private readonly PuzzleTable _table;
     private readonly ConnectInfo[] _connections;
 
-    private readonly EdgeInfo[] edgeConnections = Array.Empty<EdgeInfo>();
+    private Dictionary<Edge, List<(Edge Key, Edge Target, float Value)>> edgeConnections = new();
 
-    private List<EdgeInfo> excluded = new();
+    private List<ExcludeData> excluded = new();
     public RecommendationService(WorkspaceData workspace, PuzzleTable table, ConnectInfo[] connections)
     {
         _workspace = workspace;
         _table = table;
         _connections = connections;
-        edgeConnections = connections
-            .SelectMany(x => x.Edges.SelectMany(y => y.Connection.Select(z => new EdgeInfo
-            {
-                PieceName1 = x.PieceName,
-                EdgeIndex1 = y.Index,
-                PieceName2 = z.PieceName,
-                EdgeIndex2 = z.EdgeIndex,
-                Value = z.Value,
-            })))
+        var conn = connections
+            .SelectMany(x => x.Edges.SelectMany(y => y.Connection
+                .Where(z => z.Value < 2)
+                .Select(z => new EdgeWithValue
+                {
+                    Edge1 = new Edge(x.PieceName, y.Index),
+                    Edge2 = new Edge(z.PieceName, z.EdgeIndex),
+                    Value = z.Value,
+                })))
             .ToArray();
+
+        var conn1 = conn.Select(x => (Key: x.Edge1, Target: x.Edge2, Value: x.Value));
+        var conn2 = conn.Select(x => (Key: x.Edge2, Target: x.Edge1, Value: x.Value));
+        edgeConnections = conn1.Concat(conn2)
+            .GroupBy(x => x.Key)
+            .ToDictionary(x => x.Key, x => x.OrderBy(e => e.Value).ToList());
 
         LoadExcludedData();
     }
@@ -79,11 +98,11 @@ public class RecommendationService
         if (File.Exists(excludedPath))
         {
             var text = File.ReadAllText(excludedPath);
-            excluded = JsonSerializer.Deserialize<List<EdgeInfo>>(text)!;
+            excluded = JsonSerializer.Deserialize<List<ExcludeData>>(text)!;
         }
     }
 
-    public async Task Exclude(EdgeInfo edgeInfo)
+    public async Task Exclude(ExcludeData edgeInfo)
     {
         excluded.Add(edgeInfo);
         var text = JsonSerializer.Serialize(excluded, new JsonSerializerOptions { WriteIndented = true });
@@ -97,21 +116,34 @@ public class RecommendationService
         // 2. 빈 칸 방향 엣지 정보를 모은다.
         // 3. 빈 칸 방향 엣지 정보를 기반으로 추천을 한다.
 
-        (PuzzleCell Cell, int Edge)[] targetEdges = _table.Cells
+        (PuzzleCell Cell, int Edge)[] fixedEdges = _table.Cells
             .Where((_, row) => row >= rowRange.Start.Value && row <= rowRange.End.Value)
             .SelectMany(row => row.Where((_, column) => column >= columnRange.Start.Value && column <= columnRange.End.Value))
             .SelectMany(cell => GetTargetEdges(cell))
             .ToArray();
 
-        RecommendedData[] result = edgeConnections
-            // 이미 맞춰진 엣지는 제외한다.
-            .Where(e => !(_table.Contains(e.PieceName1) && _table.Contains(e.PieceName2)))
-            // 한 쪽이 맞춰진 엣지를 찾는다.
-            .Where(edgeInfo => targetEdges.Any(t => edgeInfo.Contains(t.Cell.PieceName, t.Edge)))
-            .Select(edgeInfo =>
+        var tablePieces = _table.Cells
+            .SelectMany(row => row.Select(cell => cell?.PieceName))
+            .Where(name => name != null)
+            .ToHashSet();
+
+        var result = fixedEdges
+            .Where(x => edgeConnections.ContainsKey(new Edge(x.Cell.PieceName, x.Edge)))
+            .Select(fixedEdge =>
             {
-                var targetEdge = targetEdges.First(t => edgeInfo.Contains(t.Cell.PieceName, t.Edge));
-                return new RecommendedData(edgeInfo, targetEdge);
+                var connectionEdges = edgeConnections[new Edge(fixedEdge.Cell.PieceName, fixedEdge.Edge)]
+                    .Where(edgeInfo => !tablePieces.Contains(edgeInfo.Target.PieceName))
+                    .Select(edgeInfo => new RecommendedData(fixedEdge.Cell, edgeInfo.Key, edgeInfo.Target, edgeInfo.Value));
+
+                return connectionEdges;
+            })
+            .SelectMany(x => x)
+            .GroupBy(x => (x.TargetRow, x.TargetColumn, x.Fixed, x.Recommended))
+            .Select(x => x.First())
+            .Where(x =>
+            {
+                var edata = new ExcludeData(x.TargetRow, x.TargetColumn, x.Recommended.PieceName);
+                return !excluded.Contains(edata);
             })
             .ToArray();
 

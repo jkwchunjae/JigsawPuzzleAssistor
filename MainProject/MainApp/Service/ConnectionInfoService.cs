@@ -1,5 +1,6 @@
 ﻿using Common.PieceInfo;
 using JkwExtensions;
+using PuzzleTableHelperCore;
 using System.Text.Json;
 
 namespace MainApp.Service;
@@ -7,6 +8,7 @@ namespace MainApp.Service;
 public class ConnectionInfoService
 {
     private WorkspaceData workspace;
+    private PuzzleTableService? tableService;
     public event EventHandler<ProgressEventArgs>? ProgressChanged;
 
     private ConnectInfo[]? connections;
@@ -22,9 +24,10 @@ public class ConnectionInfoService
         },
     };
 
-    public ConnectionInfoService(WorkspaceData workspace)
+    public ConnectionInfoService(WorkspaceData workspace, PuzzleTableService? tableService = null)
     {
         this.workspace = workspace;
+        this.tableService = tableService;
     }
 
     public async Task Start(bool openFolder = false)
@@ -147,6 +150,10 @@ public class ConnectionInfoService
     }
     private async Task<ConnectInfo[]> LoadConnectInfoAsync()
     {
+        if (this.tableService != null)
+        {
+            return this.tableService.ConnectInfo;
+        }
         return (await Directory.GetFiles(workspace.ConnectionDir, "*.json")
             .Select(path => File.ReadAllTextAsync(path))
             .WhenAll())

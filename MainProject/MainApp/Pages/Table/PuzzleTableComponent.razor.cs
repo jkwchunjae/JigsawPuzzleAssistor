@@ -139,7 +139,7 @@ public partial class PuzzleTableComponent : ComponentBase
     private async Task SelectRecommended(RecommendedData recommendedData)
     {
         var rData = recommendedData;
-        var cell = _service.MakePuzzleCell(rData.FixedPieceName, rData.FixedEdgeIndex, rData.RecommendedPieceName, rData.RecommendedEdgeIndex);
+        var cell = _service.MakePuzzleCell(rData.Fixed.PieceName, rData.Fixed.EdgeIndex, rData.Recommended.PieceName, rData.Recommended.EdgeIndex);
         _puzzleTable = await _service.SelectTableCell(new() { cell });
         _targets = new();
         _suggestionSets = new();

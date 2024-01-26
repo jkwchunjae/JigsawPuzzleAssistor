@@ -1,18 +1,19 @@
 @using MainApp.Service
 
-<MudTable T="RecommendedData" Items="RecommendedDatas">
+<MudTable T="RecommendedData" Items="RecommendedDatas" Dense="true">
     <HeaderContent>
         <MudTh>좌표</MudTh>
-        <MudTh>맞춘 퍼즐</MudTh>
         <MudTh>추천 퍼즐</MudTh>
         <MudTh>값</MudTh>
-        <MudTh></MudTh>
+        <MudTh><MudIconButton OnClick="(() => Refresh())" Icon="@Icons.Material.Filled.Refresh"/></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Row @context.Column</MudTd>
-        <MudTd>@context.FixedPieceName</MudTd>
-        <MudTd>@context.RecommendedPieceName</MudTd>
+        <MudTd>@context.TargetRow @context.TargetColumn</MudTd>
+        <MudTd>@context.RecommendedNumber</MudTd>
         <MudTd>@context.Value</MudTd> 
-        <MudTd><MudButton OnClick="(() => Select(context))">선택</MudButton></MudTd>
+        <MudTd>
+            <MudButton OnClick="(() => Select(context))" Size="Size.Small">선택</MudButton>
+            <MudButton OnClick="(() => Exclude(context))" Size="Size.Small">제외</MudButton>
+        </MudTd>
     </RowTemplate>
 </MudTable>
