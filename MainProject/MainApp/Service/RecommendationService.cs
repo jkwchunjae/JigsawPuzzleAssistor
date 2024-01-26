@@ -117,8 +117,8 @@ public class RecommendationService
         // 3. 빈 칸 방향 엣지 정보를 기반으로 추천을 한다.
 
         (PuzzleCell Cell, int Edge)[] fixedEdges = _table.Cells
-            .Where((_, row) => row >= rowRange.Start.Value && row <= rowRange.End.Value)
-            .SelectMany(row => row.Where((_, column) => column >= columnRange.Start.Value && column <= columnRange.End.Value))
+            .Where((_, row) => row > rowRange.Start.Value && row < rowRange.End.Value)
+            .SelectMany(row => row.Where((_, column) => column > columnRange.Start.Value && column < columnRange.End.Value))
             .SelectMany(cell => GetTargetEdges(cell))
             .ToArray();
 
