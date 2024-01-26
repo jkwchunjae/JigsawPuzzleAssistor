@@ -9,6 +9,7 @@
                                     TableService="TableService"
                                     Table="_puzzleTable"
                                     Targets="_targets"
+                                    HoverRecommendation="_hoverRecommendation"
                                     SuggestionSet="_testSet"
                                     OnAddTarget="@(e => AddTarget(e.Row, e.Column))"
                                     OnRemoveTarget="@(e => RemoveTarget(e.Row, e.Column))"
@@ -22,6 +23,7 @@
         PuzzleTableService="_service"
         TargetRange="_targetRange"
         OnSelect="@(x => SelectRecommended(x))"
+        OnHover="(x => _hoverRecommendation = x)"
         />
     </div>
 </div>

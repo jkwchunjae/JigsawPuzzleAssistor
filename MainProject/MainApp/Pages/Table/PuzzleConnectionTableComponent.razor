@@ -60,7 +60,11 @@
                 <td class="piece cell">
                     @if (cellNumber == 0)
                     {
-                        @if (IsTarget(row, column))
+                        @if (IsHoverRecommendation(row, column))
+                        {
+                            <button class="cell-button target-recommended" @onclick="@(e => RemoveTarget(rowIndex, columnIndex))">-</button>
+                        }
+                        else if (IsTarget(row, column))
                         {
                             <button class="cell-button target-remove" @onclick="@(e => RemoveTarget(rowIndex, columnIndex))">-</button>
                         }

@@ -13,6 +13,7 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
     [Parameter] public PuzzleTable? Table { get; set; } = null!;
     [Parameter] public SuggestionSet? SuggestionSet { get; set; } = null;
     [Parameter] public List<(int Row, int Column)> Targets { get; set; } = null;
+    [Parameter] public (int Row, int Column) HoverRecommendation { get; set; }
     [Parameter] public EventCallback<(int Row, int Column)> OnAddTarget { get; set; }
     [Parameter] public EventCallback<(int Row, int Column)> OnRemoveTarget { get; set; }
     [Parameter] public EventCallback<(Range RowRange, Range ColumnRange)> OnRangeChanged { get; set; }
@@ -227,5 +228,10 @@ public partial class PuzzleConnectionTableComponent : ComponentBase
     {
         var fileName = Path.GetFileName(Service.TableFilePath);
         return TableService.SaveTableInitOption(fileName, TableInitOption);
+    }
+
+    private bool IsHoverRecommendation(int row, int column)
+    {
+        return HoverRecommendation == (row, column);
     }
 }

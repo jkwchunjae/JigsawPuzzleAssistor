@@ -1,6 +1,6 @@
 @using MainApp.Service
 
-<MudTable T="RecommendedData" Items="RecommendedDatas" Dense="true">
+<MudTable T="RecommendedData" Items="RecommendedDatas" Dense="true" OnRowMouseEnter="(e => RowMouseEnter(e))" OnRowMouseLeave="(e => RowMouseLeave(e))">
     <HeaderContent>
         <MudTh>좌표</MudTh>
         <MudTh>추천 퍼즐</MudTh>

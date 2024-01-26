@@ -1,6 +1,8 @@
 
 using MainApp.Service;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using MudBlazor;
 using PuzzleTableHelperCore;
 
 namespace MainApp.Pages.Table;
@@ -8,12 +10,14 @@ namespace MainApp.Pages.Table;
 public partial class PuzzleTableRecommendationComponent : ComponentBase
 {
     [Inject] WorkspaceService WorkspaceService { get; set; } = null!;
+    [Inject] IJSRuntime js { get; set; } = null!;
 
     [Parameter] public TableService TableService { get; set; } = null!;
     [Parameter] public PuzzleTableService PuzzleTableService { get; set; } = null!;
     [Parameter] public PuzzleTable Table { get; set; } = null!;
     [Parameter] public (Range RowRange, Range ColumnRange) TargetRange { get; set; } = (new Range(0, 1), new Range(0, 1));
     [Parameter] public EventCallback<RecommendedData> OnSelect { get; set; }
+    [Parameter] public EventCallback<(int Row, int Column)> OnHover { get; set; }
 
     List<RecommendedData> RecommendedDataAll = null;
     RecommendedData[] RecommendedDatas = Array.Empty<RecommendedData>();
@@ -56,5 +60,15 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
         await RecommendationService.Exclude(excludeData);
         RecommendedDataAll.Remove(recommendedData);
         RecommendedDatas = RecommendedDataAll.Take(5).ToArray();
+    }
+
+    private async Task RowMouseEnter(TableRowHoverEventArgs<RecommendedData> arg)
+    {
+        await OnHover.InvokeAsync((arg.Item.TargetRow, arg.Item.TargetColumn));
+    }
+
+    private Task RowMouseLeave(TableRowHoverEventArgs<RecommendedData> arg)
+    {
+        return OnHover.InvokeAsync(default);
     }
 }

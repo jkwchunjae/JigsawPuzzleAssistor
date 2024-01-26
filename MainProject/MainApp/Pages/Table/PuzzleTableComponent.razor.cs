@@ -26,10 +26,9 @@ public partial class PuzzleTableComponent : ComponentBase
     SuggestionSet? _testSet = null;
     List<(int Row, int Column, int Number, HintFlag Flag)> _hint = new();
 
-    int displayColumnStart = 0;
-    int displayRowStart = 0;
 
     (Range RowRange, Range ColumnRange) _targetRange = (new Range(0, 1), new Range(0, 1));
+    (int Row, int Column) _hoverRecommendation = default;
 
     protected override async Task OnInitializedAsync()
     {
