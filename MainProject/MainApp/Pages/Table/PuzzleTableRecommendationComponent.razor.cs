@@ -37,7 +37,7 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
         RecommendedDataAll = RecommendationService.Recommend(TargetRange.RowRange, TargetRange.ColumnRange)
             .OrderBy(x => x.Value)
             .ToList();
-        RecommendedDatas = RecommendedDataAll.Take(5).ToArray();
+        RecommendedDatas = RecommendedDataAll.Take(10).ToArray();
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -46,7 +46,7 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
     {
         await OnSelect.InvokeAsync(recommendedData);
         RecommendedDataAll.Remove(recommendedData);
-        RecommendedDatas = RecommendedDataAll.Take(5).ToArray();
+        RecommendedDatas = RecommendedDataAll.Take(10).ToArray();
     }
 
     private async Task Exclude(RecommendedData recommendedData)
@@ -59,7 +59,7 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
         );
         await RecommendationService.Exclude(excludeData);
         RecommendedDataAll.Remove(recommendedData);
-        RecommendedDatas = RecommendedDataAll.Take(5).ToArray();
+        RecommendedDatas = RecommendedDataAll.Take(10).ToArray();
     }
 
     private async Task RowMouseEnter(TableRowHoverEventArgs<RecommendedData> arg)
