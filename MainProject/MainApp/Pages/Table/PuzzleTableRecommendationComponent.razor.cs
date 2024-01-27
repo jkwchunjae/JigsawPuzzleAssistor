@@ -27,9 +27,10 @@ public partial class PuzzleTableRecommendationComponent : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         var connectionService = new ConnectionInfoService(WorkspaceService.CurrentWorkspace!, PuzzleTableService);
-        var connections = await connectionService.GetAllConnectionsAsync();
+        var connections = PuzzleTableService.ConnectInfo;
+        var pieceInfos = PuzzleTableService.PieceInfo;
 
-        RecommendationService = new RecommendationService(WorkspaceService.CurrentWorkspace!, Table, connections);
+        RecommendationService = new RecommendationService(WorkspaceService.CurrentWorkspace!, Table, connections, pieceInfos);
     }
 
     protected Task Refresh()

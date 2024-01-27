@@ -63,15 +63,17 @@ public class RecommendationService
     private readonly WorkspaceData _workspace;
     private readonly PuzzleTable _table;
     private readonly ConnectInfo[] _connections;
+    private readonly PieceInfo[] _pieceInfos;
 
     private Dictionary<Edge, List<(Edge Key, Edge Target, float Value)>> edgeConnections = new();
 
     private List<ExcludeData> excluded = new();
-    public RecommendationService(WorkspaceData workspace, PuzzleTable table, ConnectInfo[] connections)
+    public RecommendationService(WorkspaceData workspace, PuzzleTable table, ConnectInfo[] connections, PieceInfo[] pieceInfos)
     {
         _workspace = workspace;
         _table = table;
         _connections = connections;
+        _pieceInfos = pieceInfos;
         var conn = connections
             .SelectMany(x => x.Edges.SelectMany(y => y.Connection
                 .Where(z => z.Value < 2)
@@ -145,6 +147,7 @@ public class RecommendationService
                 var edata = new ExcludeData(x.TargetRow, x.TargetColumn, x.Recommended.PieceName);
                 return !excluded.Contains(edata);
             })
+            .Where(x => CheckMinimum(x))
             .ToArray();
 
         return result;
@@ -173,6 +176,66 @@ public class RecommendationService
             {
                 yield return (cell, cell.RightEdgeIndex);
             }
+        }
+
+        bool CheckMinimum(RecommendedData rData)
+        {
+            var (row, column) = (rData.TargetRow, rData.TargetColumn);
+            var fixedName = rData.Fixed.PieceName;
+
+            var topCell = _table.GetCell(row - 1, column);
+            var bottomCell = _table.GetCell(row + 1, column);
+            var leftCell = _table.GetCell(row, column - 1);
+            var rightCell = _table.GetCell(row, column + 1);
+
+            var topInfo = _pieceInfos.FirstOrDefault(x => x.Name == topCell?.PieceName);
+            var bottomInfo = _pieceInfos.FirstOrDefault(x => x.Name == bottomCell?.PieceName);
+            var leftInfo = _pieceInfos.FirstOrDefault(x => x.Name == leftCell?.PieceName);
+            var rightInfo = _pieceInfos.FirstOrDefault(x => x.Name == rightCell?.PieceName);
+
+            var fixedCell = new [] { topCell, bottomCell, leftCell, rightCell }.First(x => x?.PieceName == fixedName);
+            var recommededInfo = _pieceInfos.First(x => x.Name == rData.Recommended.PieceName);
+            var rTopEdge = CalcRecommendedTopEdge(rData.Fixed.EdgeIndex, fixedCell.TopEdgeIndex, rData.Recommended.EdgeIndex);
+            var rBottomEdge = (rTopEdge + 2) % 4;
+            var rLeftEdge = (rTopEdge + 3) % 4;
+            var rRightEdge = (rTopEdge + 1) % 4;
+
+            if (topInfo != null && !EdgeTypeTest(topInfo!.Edges[topCell!.BottomEdgeIndex].Type, recommededInfo!.Edges[rTopEdge].Type))
+                return false;
+            if (bottomInfo != null && !EdgeTypeTest(bottomInfo!.Edges[bottomCell!.TopEdgeIndex].Type, recommededInfo!.Edges[rBottomEdge].Type))
+                return false;
+            if (leftInfo != null && !EdgeTypeTest(leftInfo!.Edges[leftCell!.RightEdgeIndex].Type, recommededInfo!.Edges[rLeftEdge].Type))
+                return false;
+            if (rightInfo != null && !EdgeTypeTest(rightInfo!.Edges[rightCell!.LeftEdgeIndex].Type, recommededInfo!.Edges[rRightEdge].Type))
+                return false;
+            return true;
+        }
+
+        bool EdgeTypeTest(EdgeType type1, EdgeType type2)
+        {
+            if (type1 == EdgeType.Hole && type2 == EdgeType.Head)
+                return true;
+            if (type1 == EdgeType.Head && type2 == EdgeType.Hole)
+                return true;
+            return false;
+        }
+
+        int CalcRecommendedTopEdge(int fixedEdge, int fixedTop, int recommendedEdge)
+        {
+            var isFixedTop = fixedEdge == (fixedTop + 2) % 4;
+            var isFixedBottom = fixedEdge == fixedTop;
+            var isFixedLeft = fixedEdge == (fixedTop + 1) % 4;
+            var isFixedRight = fixedEdge == (fixedTop + 3) % 4;
+
+            if (isFixedTop)
+                return recommendedEdge;
+            if (isFixedBottom)
+                return (recommendedEdge + 2) % 4;
+            if (isFixedLeft)
+                return (recommendedEdge + 1) % 4;
+            if (isFixedRight)
+                return (recommendedEdge + 3) % 4;
+            throw new Exception("Invalid edge");
         }
     }
 }

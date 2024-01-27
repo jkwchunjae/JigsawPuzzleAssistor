@@ -27,6 +27,7 @@ public class PuzzleTableService
 
     public PuzzleTable PuzzleTable => _puzzleTable;
     public ConnectInfo[] ConnectInfo => _connectInfos;
+    public PieceInfo[] PieceInfo => _pieceInfos;
 
     public PuzzleTableService(PuzzleTableServiceOption option)
     {
