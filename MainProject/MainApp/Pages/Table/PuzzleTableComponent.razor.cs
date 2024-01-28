@@ -42,6 +42,7 @@ public partial class PuzzleTableComponent : ComponentBase
         if (!IsTarget(row, column))
         {
             _targets.Add((row, column));
+            GetSuggestionSets(5);
         }
     }
 
@@ -50,6 +51,7 @@ public partial class PuzzleTableComponent : ComponentBase
         if (IsTarget(row, column))
         {
             _targets.Remove((row, column));
+            GetSuggestionSets(5);
         }
     }
 
