@@ -134,6 +134,7 @@ public class RecommendationService
             .Select(fixedEdge =>
             {
                 var connectionEdges = edgeConnections[new Edge(fixedEdge.Cell.PieceName, fixedEdge.Edge)]
+                    //.Take(3)
                     .Where(edgeInfo => !tablePieces.Contains(edgeInfo.Target.PieceName))
                     .Select(edgeInfo => new RecommendedData(fixedEdge.Cell, edgeInfo.Key, edgeInfo.Target, edgeInfo.Value));
 
@@ -148,6 +149,8 @@ public class RecommendationService
                 return !excluded.Contains(edata);
             })
             .Where(x => CheckMinimum(x))
+            .GroupBy(x => (x.TargetRow, x.TargetColumn))
+            .SelectMany(x => x.OrderBy(x => x.Value).Take(3))
             .ToArray();
 
         return result;

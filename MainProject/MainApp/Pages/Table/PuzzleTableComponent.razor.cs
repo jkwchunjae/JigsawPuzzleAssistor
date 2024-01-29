@@ -71,6 +71,10 @@ public partial class PuzzleTableComponent : ComponentBase
             var sets = _service.FindTarget(limit, _targets);
             UpdateSuggestionSets(sets);
         }
+        else
+        {
+            _suggestionSets = new();
+        }
     }
 
     private void UpdateSuggestionSets(IEnumerable<SuggestionSet> sets)

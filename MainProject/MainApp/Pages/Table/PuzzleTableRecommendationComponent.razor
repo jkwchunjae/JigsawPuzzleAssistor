@@ -3,9 +3,9 @@
 <MudTable T="RecommendedData" Items="RecommendedDatas" Dense="true" OnRowMouseEnter="(e => RowMouseEnter(e))" OnRowMouseLeave="(e => RowMouseLeave(e))">
     <HeaderContent>
         <MudTh>좌표</MudTh>
-        <MudTh>추천 퍼즐</MudTh>
+        <MudTh>추천</MudTh>
         <MudTh>값</MudTh>
-        <MudTh><MudIconButton OnClick="(() => Refresh())" Icon="@Icons.Material.Filled.Refresh"/></MudTh>
+        <MudTh><MudIconButton OnClick="(() => Refresh())" Icon="@Icons.Material.Filled.Refresh" Size="Size.Small"/></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd>@context.TargetRow @context.TargetColumn</MudTd>
